@@ -1,8 +1,10 @@
-const express = require("express");
-const morgan = require('morgan');
-const cors = require('cors');
+import express from "express";
+import morgan from "morgan";
+import cors from "cors";
 
 const app = express();
+
+import authRoute from "./routes/auth.route.js";
 
 const corsOptions = {
     origin: [
@@ -16,6 +18,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(morgan('dev'));
 app.use(express.json());
-app.use(cors());
 
-module.exports = app;
+app.use("/api/v1",authRoute);
+
+export default app;
