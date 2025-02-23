@@ -1,5 +1,5 @@
 import express from "express";
-import { signup } from "../controllers/auth.controller.js";
+import { signup,signin } from "../controllers/auth.controller.js";
 const router = express.Router();
 // const verifyToken = require('../middlewares/auth');
 
@@ -12,6 +12,8 @@ const router = express.Router();
 
 
 router.route("/signup").post(signup);
+router.route("/signin").post(signin);
+
 
 export default router;
 

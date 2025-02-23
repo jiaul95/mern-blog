@@ -39,7 +39,8 @@ export default function SignUp() {
 
         console.error('Error Response', error);
         setLoading(false);
-        setErrorMessage(error.message);
+        setErrorMessage(error.response.data.message);
+
       });    
   }
 
