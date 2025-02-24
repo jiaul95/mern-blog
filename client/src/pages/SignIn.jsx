@@ -4,12 +4,16 @@ import { Link,useNavigate } from "react-router-dom";
 
 import axiosInstance from "../../axios/axios.js";
 
+import { signInStart,signInSuccess,signInFailure } from "../features/user/userSlice.js";
+import {useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
+
 export default function SignIn() {
 
   const  [formData,setFormData] = useState({});
-  const [errorMessage,setErrorMessage] = useState(null);
-  const [loading,setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const {error: errorMessage,loading} = useSelector((state) => state.user);
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -18,27 +22,25 @@ export default function SignIn() {
 
 
   const handleSubmit = (e) => {
-      e.preventDefault();
-      setLoading(true);
-      setErrorMessage(null);
+      e.preventDefault();      
+      dispatch(signInStart());
 
-      if(!formData.email || !formData.password) {
-        setErrorMessage("All fields are required!");
-        setLoading(false);
+      if(!formData.email || !formData.password) {       
+        dispatch(signInFailure("All fields are required!"));
         return;
       }    
       axiosInstance.post('/signin', formData)
       .then((res) => {
         console.log('res',res.data);
-        if(res.data.success === true){
-          setLoading(false);
+        if(res.data.success === true){         
+          dispatch(signInSuccess(res.data.data));
           navigate('/');
         }
       })
       .catch((error) => {
         console.error('Error Response', error);
-        setLoading(false);
-        setErrorMessage(error.response.data.message);
+        dispatch(signInFailure(error.response.data.message));
+
       });    
   }
 
@@ -51,7 +53,7 @@ export default function SignIn() {
         <div className="flex-1">
           <Link to="/" className="font-bold dark:text-white text-4xl"> 
             <span className="px-2 py-1 bg-gradient-to-r from-indigo-500
-            via-purple-500 to-pink-500 rounded-lg text-white"> Jiaul's </span>
+            via-purple-500 to-pink-500 rounded-lg text-white"> Jiauls </span>
             Blog
           </Link>
           <p className="text-sm mt-5">
