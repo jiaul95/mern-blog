@@ -1,4 +1,4 @@
-export default function Projects() {
+export const Projects = () => {
   return (
     <div>
       Projects

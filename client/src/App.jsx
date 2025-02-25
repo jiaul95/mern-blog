@@ -1,12 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router";
-import Home from "./pages/Home";
-import About from "./pages/About";
-import SignIn from "./pages/SignIn";
-import SignUp from "./pages/SignUp";
-import Dashboard from "./pages/Dashboard";
-import Projects from "./pages/Projects";
-import Header from "./components/Header";
-import FooterComponent from "./components/FooterComponent";
+import {Home} from "./pages/Home.jsx";
+import {About} from "./pages/About.jsx";
+import {SignIn} from "./pages/SignIn.jsx";
+import {SignUp} from "./pages/SignUp.jsx";
+import {Dashboard} from "./pages/Dashboard.jsx";
+import {Projects} from "./pages/Projects.jsx";
+import {Header} from "./components/Header.jsx";
+import {FooterComponent} from "./components/FooterComponent.jsx";
 
 export default function App() {
   return (

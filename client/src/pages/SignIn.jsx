@@ -7,8 +7,9 @@ import axiosInstance from "../../axios/axios.js";
 import { signInStart,signInSuccess,signInFailure } from "../features/user/userSlice.js";
 import {useSelector} from "react-redux";
 import {useDispatch} from "react-redux";
+import { OAuth } from "../components/OAuth.jsx";
 
-export default function SignIn() {
+export const SignIn = () => {
 
   const  [formData,setFormData] = useState({});
   const navigate = useNavigate();
@@ -84,6 +85,8 @@ export default function SignIn() {
                     ) :"Sign In"
                   }
               </Button>
+
+              <OAuth/>
           </form>
           <div className="flex gap-2 text-sm mt-5">
             <span>Do not have an account?</span> <Link to="/sign-up" className="text-blue-500">Sign Up</Link>
