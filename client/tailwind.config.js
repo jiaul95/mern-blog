@@ -3,6 +3,7 @@ export default {
   content: [
     flowbite.content(),
   ],
+  darkMode: 'class',
   theme: {
     extend: {},
   },
