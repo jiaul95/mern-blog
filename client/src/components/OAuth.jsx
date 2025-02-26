@@ -22,34 +22,28 @@ export const OAuth = () => {
           });
 
 
-          try {
             const resultsFromGoogleAuth = await signInWithPopup(auth,provider);
             console.log("Successfully signed in with Google: ", resultsFromGoogleAuth);
-            // const googleOAuthResponse = {
-            //     email: resultsFromGoogleAuth.user.email,
-            //     name: resultsFromGoogleAuth.user.displayName,
-            //     googlePhotoUrl: resultsFromGoogleAuth.user.photoURL              
-            // };
+            const googleOAuthResponse = {
+                email: resultsFromGoogleAuth.user.email,
+                name: resultsFromGoogleAuth.user.displayName,
+                googlePhotoUrl: resultsFromGoogleAuth.user.photoURL              
+            };
 
-            // axiosInstance.post("/api/google",googleOAuthResponse)
-            // .then((res) => {
-            // console.log('res',res.data);
-            // if(res.data.success === true){         
-            //     dispatch(signInSuccess(res.data.data));
-            //     navigate('/');
-            // }
-            // })
-            // .catch((error) => {
-            // console.error('Error Response', error);
-            // dispatch(signInFailure(error.response.data.message));
+            axiosInstance.post("/google",googleOAuthResponse)
+            .then((res) => {
+              // console.log('res',res.data);
+              if(res.data.success === true){         
+                  dispatch(signInSuccess(res.data.data));
+                  navigate('/');
+              }
+            })
+            .catch((error) => {
+              console.error('Error Response', error);
+              dispatch(signInFailure(error.response.data.message));
     
-            // });    
+            });    
             
-
-          } catch (error) {
-            console.log("firebase oauth error: ", error); 
-            
-          }
 
     }
 
