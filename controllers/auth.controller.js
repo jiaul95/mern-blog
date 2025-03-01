@@ -18,7 +18,7 @@ export const signup = async (req, res, next) => {
     password === ""
   ) {
 
-    next(errorHandler(422,"All fields are required"));
+    return next(errorHandler(422,"All fields are required"));
    
   }
 
@@ -53,7 +53,7 @@ export const signin = async (req, res, next) => {
     email === "" ||
     password === ""
   ) {
-    next(errorHandler(422,"All fields are required"));   
+    return next(errorHandler(422,"All fields are required"));   
   }
 
   const validateUser = await User.findOne({email:email});
@@ -158,7 +158,7 @@ export const uploadProfileImage = async (req, res,next) => {
     if (err) {
       console.log("error",err);
       // return res.status(500).json({ error: "File upload failed!", details: err });
-      next(errorHandler(500,"File upload failed!"));
+      return next(errorHandler(500,"File upload failed!"));
 
     }
 
@@ -185,7 +185,7 @@ export const uploadProfileImage = async (req, res,next) => {
 
       if (!updatedUser) {
         // return res.status(404).json({ error: "User not found!" });
-        next(errorHandler(400,"User not found!"));        
+        return next(errorHandler(400,"User not found!"));        
       }
 
       // res.status(200).json({ message: "Profile picture updated successfully!", profilePicture: updatedUser.profilePicture });
@@ -199,10 +199,76 @@ export const uploadProfileImage = async (req, res,next) => {
     
     } catch (error) {
       // res.status(500).json({ error: "Error updating user profile picture", details: error });
-      next(errorHandler(500,"Error updating user profile picture"));          
+      return next(errorHandler(500,"Error updating user profile picture"));          
     }
   });
 };
 
 
+// update user
+export const updateUser = async (req, res, next) => {
+
+  const {userId} = req.params.userId;
+  if(req.user.id !== req.params.userId)
+  {
+    return next(errorHandler(403,"You are forbidden to update user profile"));   
+  }
+
+  if(req.body.password && req.body.password.length < 6){
+    return next(errorHandler(400,"Password should be at least 6 characters long"));
+  }
+
+  req.body.password = bcrypt.hashSync(req.body.password, 10);
+
+  if(req.body.username && req.body.username.length < 7 || req.body.username > 20){
+     return next(errorHandler(400, "Username must be between 7 and 20 characters"))
+  }
+
+  
+  if(req.body.username && req.body.username.includes(" ")){
+    return next(errorHandler(400, "Username cannot contain spaces"))
+  }
+  
+  if(req.body.username !== req.body.username.toLowerCase()){
+    return next(errorHandler(400, "Username must be in lowercase"))
+  }
+
+  if(!req.body.username.match(/^[a-zA-Z0-9]+$/)){
+    return next(errorHandler(400, "Username can only contain letters and numbers"))
+  }
+  
+  try {
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        username: req.body.username,
+        email: req.body.email,
+        // profilePicture: req.body.profilePicture,
+        password: req.body.password
+      },
+      { new: true }
+    );
+    
+    console.log("updatedUser", updatedUser);
+    
+    if (updatedUser) {
+      const { password, ...rest } = updatedUser._doc; // Ensure `updatedUser` is not null before destructuring
+      console.log("Updated User without password:", rest);
+    } else {
+      console.log("User not found or update failed");
+    }
+    
+    if (updatedUser) {
+        res.status(201).json({
+          success: true,
+          statusCode: 201,
+          message: "User created successfully",
+          data: rest,
+        });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
 
