@@ -18,13 +18,21 @@
 
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import "../assets/css/theme.css";
 
 export default function ThemeProvider({ children }) {
   const { theme } = useSelector((state) => state.theme);
 
+  // useEffect(() => {
+  //   document.documentElement.classList.toggle("dark", theme === "dark");
+  // }, [theme]);
+
   useEffect(() => {
-    // Apply or remove the "dark" class on the <html> element
-    document.documentElement.classList.toggle("dark", theme === "dark");
+    if (theme === "dark") {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
   }, [theme]);
 
   console.log("theme:", theme);

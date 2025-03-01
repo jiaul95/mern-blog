@@ -19,6 +19,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(morgan('dev'));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // Parses form-data
+app.use("/uploads", express.static("uploads"));
 
 app.use("/api/v1",authRoute);
 

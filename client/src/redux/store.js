@@ -15,6 +15,7 @@ const persistConfig = {
     key: 'root',
     version: 1,
     storage,
+    blacklist: ["loading", "error"],
   }
 
   const persisteReducer = persistReducer(persistConfig,rootReducer);

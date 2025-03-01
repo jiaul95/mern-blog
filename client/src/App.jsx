@@ -7,8 +7,28 @@ import {Dashboard} from "./pages/Dashboard.jsx";
 import {Projects} from "./pages/Projects.jsx";
 import {Header} from "./components/Header.jsx";
 import {FooterComponent} from "./components/FooterComponent.jsx";
+import "./assets/css/theme.css";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { PrivateRoute } from "./components/PrivateRoute.jsx";
+
 
 export default function App() {
+
+  // const { theme } = useSelector((state) => state.theme);
+
+  // // useEffect(() => {
+  // //   document.documentElement.classList.toggle("dark", theme === "dark");
+  // // }, [theme]);
+
+  // useEffect(() => {
+  //   if (theme === "dark") {
+  //     document.body.classList.add("dark-mode");
+  //   } else {
+  //     document.body.classList.remove("dark-mode");
+  //   }
+  // }, [theme]);
+
   return (
     <BrowserRouter>
       <Header />
@@ -17,7 +37,9 @@ export default function App() {
         <Route path="/about" element={<About />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
         <Route path="/projects" element={<Projects />} />
       </Routes>
       <FooterComponent />

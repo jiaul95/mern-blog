@@ -1,14 +1,26 @@
+// export default {
+//   darkMode: 'class',
+//   content: [
+//     flowbite.content(),
+//     "./src/**/*.{js,ts,jsx,tsx}",
+//   ],
+//   theme: {
+//     extend: {},
+//   },
+//   plugins: [
+//     flowbite.plugin(),
+//   ],
+// }
+
+
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
+  darkMode: "class", // Ensure it's set to 'class'
   content: [
-    flowbite.content(),
+    "./src/**/*.{js,ts,jsx,tsx}", // Ensure all your source files are included
   ],
-  darkMode: 'class',
   theme: {
     extend: {},
   },
-  plugins: [
-    flowbite.plugin(),
-  ],
-}
-
+  plugins: [],
+};

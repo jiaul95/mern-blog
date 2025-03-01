@@ -35,7 +35,7 @@ export const SignIn = () => {
         console.log('res',res.data);
         if(res.data.success === true){         
           dispatch(signInSuccess(res.data.data));
-          navigate('/');
+          navigate('/dashboard');
         }
       })
       .catch((error) => {
