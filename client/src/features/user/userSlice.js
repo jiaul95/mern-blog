@@ -5,6 +5,7 @@ const initialState = {
     error: null,
     loading: false,
     profilePicture: null,
+    progressBar: 0
  
 }
 
@@ -25,6 +26,9 @@ export const userSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    uploadProgressStart:(state,action) => {
+      state.progressBar = action.payload;
+    },
     imageUploadStart: (state) => {
       state.error = null;
       state.loading = true;
@@ -33,16 +37,35 @@ export const userSlice = createSlice({
       state.currentUser = action.payload;
       state.loading = false;
       state.error = null;
+      state.progressBar = 0;
+
     },
     imageUploadFailure: (state,action) => {
       state.loading = false;
       state.error = action.payload;
+    },
+    dismissImageAlert:(state) => {
+      state.error = null;
+    },
+    uploadProgressReset:(state) => {
+      state.progressBar = 0;
     }
+   
+
     
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { signInStart, signInSuccess, signInFailure,imageUploadStart,imageUploadSuccess,imageUploadFailure } = userSlice.actions
+export const { signInStart, 
+                signInSuccess, 
+                signInFailure,
+                imageUploadStart,
+                imageUploadSuccess,
+                imageUploadFailure,
+                dismissImageAlert,
+                uploadProgressStart,
+                uploadProgressReset
+              } = userSlice.actions
 
 export default userSlice.reducer
