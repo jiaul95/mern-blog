@@ -24,7 +24,9 @@ export const DashProfile = () =>{
     const file = e.target.files[0];
     
     if(file.size > 2 * 1024 * 1024){    
-        dispatch(imageUploadFailure("File size should not exceed 2MB!"));
+        dispatch(imageUploadFailure("File size should not exceed 2MB!"))        
+        setImageFile(null);
+        setImageFileUrl(null);
         return;        
     }
 
@@ -58,6 +60,7 @@ export const DashProfile = () =>{
                         },
                         onUploadProgress: progressEvent => {
                             const percentCompleted = Math.round(progressEvent.loaded / progressEvent.total * 100);
+                            console.log("percentCompleted",percentCompleted);
                             dispatch(uploadProgressStart(percentCompleted));
                         }  
                     }
@@ -76,7 +79,9 @@ export const DashProfile = () =>{
               .catch((error) => {
                 console.error('Error Response', error);
                 dispatch(imageUploadFailure(error.response.data.message));  
-                dispatch(uploadProgressReset());        
+                dispatch(uploadProgressReset());    
+                setImageFile(null);
+                setImageFileUrl(null);    
               });    
 
     }
@@ -88,7 +93,7 @@ export const DashProfile = () =>{
                 <input type="file" accept="/*" onChange={handleImageChange} ref={filePickerRef} hidden/>
 
                 <div className="w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full" onClick={()=>filePickerRef.current.click()}>
-                    {imageFileUploadProgress && 
+                    {imageFileUploadProgress > 0 && imageFileUploadProgress < 100 &&
                         <CircularProgressbar value={imageFileUploadProgress || 0} text={`${imageFileUploadProgress || 0}%`} strokeWidth={5} 
                         style={{ 
                             root: {
@@ -104,7 +109,10 @@ export const DashProfile = () =>{
                         }}
                         />
                     }
-                    <img src={imageFileUrl || currentUser.profilePicture} alt="user" className="rounded-full w-full h-full object-cover border-8 border-[lightgray]"/>
+                    <img src={imageFileUrl || currentUser.profilePicture} alt="user" 
+                    className={`rounded-full w-full h-full object-cover border-8 border-[lightgray]
+                    ${imageFileUploadProgress && imageFileUploadProgress < 100 && 'opacity-60'}` }
+                    />
                 </div>
 
                 {errorMessage && 
