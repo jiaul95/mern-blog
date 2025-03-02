@@ -75,13 +75,16 @@ export const signin = async (req, res, next) => {
   const {password:pass, ...rest} = validateUser._doc;
 
   res.status(200).cookie('access_token', token,{
-    httpOnly: true
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // True in production
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    path: "/"
   }).json({
-    success: true,
-    statusCode: 200,
-    message: "Signed In successfully",
-    data: rest,
-})
+      success: true,
+      statusCode: 200,
+      message: "Signed In successfully",
+      data: rest,
+  })
   
   
 };
@@ -97,7 +100,10 @@ export const googleAuth = async (req,res,next) => {
     const {password,...rest} = findUser._doc;
 
     res.status(200).cookie('access_token', token,{
-      httpOnly: true
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // True in production
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      path: "/"
     }).json({
         success: true,
         statusCode: 200,
@@ -119,7 +125,10 @@ export const googleAuth = async (req,res,next) => {
       const token = jwt.sign({id:newUser._id},process.env.JWT_SECRET);
       const {password,...rest} = newUser._doc;
       res.status(200).cookie('access_token', token,{
-        httpOnly: true
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // True in production
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+        path: "/"
       }).json({
           success: true,
           statusCode: 200,
@@ -164,7 +173,6 @@ export const uploadProfileImage = async (req, res,next) => {
 
     try {
       const {userId} = req.body; 
-      console.log("userId: " + userId);
       if (!userId) {
         // return res.status(400).json({ error: "User ID is required!" });
         next(errorHandler(400,"User ID is required!"));
@@ -208,7 +216,10 @@ export const uploadProfileImage = async (req, res,next) => {
 // update user
 export const updateUser = async (req, res, next) => {
 
-  const {userId} = req.params.userId;
+  const userId = req.params.userId;
+
+  // console.log(req.params.userId);return;
+
   if(req.user.id !== req.params.userId)
   {
     return next(errorHandler(403,"You are forbidden to update user profile"));   
@@ -218,8 +229,10 @@ export const updateUser = async (req, res, next) => {
     return next(errorHandler(400,"Password should be at least 6 characters long"));
   }
 
-  req.body.password = bcrypt.hashSync(req.body.password, 10);
-
+  if(req.body.password) {
+    req.body.password = bcrypt.hashSync(req.body.password, 10);
+  }
+  
   if(req.body.username && req.body.username.length < 7 || req.body.username > 20){
      return next(errorHandler(400, "Username must be between 7 and 20 characters"))
   }
@@ -242,28 +255,24 @@ export const updateUser = async (req, res, next) => {
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
-        username: req.body.username,
-        email: req.body.email,
-        // profilePicture: req.body.profilePicture,
-        password: req.body.password
+        $set:{
+          username: req.body.username,
+          email: req.body.email,
+          // profilePicture: req.body.profilePicture,
+          password: req.body.password
+        },
       },
       { new: true }
     );
     
-    console.log("updatedUser", updatedUser);
+    // console.log("updatedUser", updatedUser);
+    const { password, ...rest } = updatedUser._doc; 
     
     if (updatedUser) {
-      const { password, ...rest } = updatedUser._doc; // Ensure `updatedUser` is not null before destructuring
-      console.log("Updated User without password:", rest);
-    } else {
-      console.log("User not found or update failed");
-    }
-    
-    if (updatedUser) {
-        res.status(201).json({
+        res.status(200).json({
           success: true,
           statusCode: 201,
-          message: "User created successfully",
+          message: "User Updated successfully",
           data: rest,
         });
     }

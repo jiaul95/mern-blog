@@ -5,7 +5,8 @@ const initialState = {
     error: null,
     loading: false,
     profilePicture: null,
-    progressBar: 0
+    progressBar: 0,
+    updateUserSuccess:null,
  
 }
 
@@ -44,12 +45,33 @@ export const userSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    dismissImageAlert:(state) => {
-      state.error = null;
-    },
     uploadProgressReset:(state) => {
       state.progressBar = 0;
-    }
+    },
+    updateStart: (state) => {
+      state.error = null;
+      state.loading = true;
+     },
+     updateSuccess: (state,action) => {
+       state.currentUser = action.payload;
+       state.loading = false;
+       state.error = null;
+       state.updateUserSuccess = true;
+     },
+     updateFailure: (state,action) => {
+       state.loading = false;
+       state.error = action.payload;
+     },
+     updateUserSuccess: (state,action) => {
+       state.updateUserSuccess = action.payload;
+       state.loading = false;
+       state.error = null;
+     },
+     
+    dismissImageAlert:(state) => {
+      state.error = null;
+      state.updateUserSuccess = null;
+    },
    
 
     
@@ -65,7 +87,11 @@ export const { signInStart,
                 imageUploadFailure,
                 dismissImageAlert,
                 uploadProgressStart,
-                uploadProgressReset
+                uploadProgressReset,
+                updateStart,
+                updateSuccess,
+                updateFailure,
+                updateUserSuccess
               } = userSlice.actions
 
 export default userSlice.reducer

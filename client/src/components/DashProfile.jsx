@@ -2,23 +2,69 @@ import { Alert, Button, TextInput } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import axiosInstance from "../../axios/axios";
-import { imageUploadStart,imageUploadSuccess,imageUploadFailure,dismissImageAlert,uploadProgressStart,uploadProgressReset } from "../features/user/userSlice.js";
+import { imageUploadStart,
+        imageUploadSuccess,
+        imageUploadFailure,
+        dismissImageAlert,
+        uploadProgressStart,
+        uploadProgressReset,
+        updateStart,
+        updateSuccess,
+        updateFailure,
+        updateUserSuccess
+    } from "../features/user/userSlice.js";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
 export const DashProfile = () =>{
 
-  const {currentUser} = useSelector((state)=>state.user);
   const [imageFile,setImageFile] = useState(null);
   const [imageFileUrl,setImageFileUrl] = useState(null);
-//   const [imageFileUploadError,setImageFileUploadError] = useState(null);
   const filePickerRef = useRef(null);
   const dispatch = useDispatch();
-  const {error: errorMessage,imageFileUploadProgress} = useSelector((state) => state.user);
+  const {currentUser,updateUserSuccess:updateSuccessMessage,error: errorMessage,imageFileUploadProgress} = useSelector((state) => state.user);
+  const [formInput,setFormInput] = useState({});
 
+    // console.log("imageFileUrl",imageFileUrl);
+    // console.log("uploadede image",currentUser.profilePicture);
 
-    console.log("imageFileUrl",imageFileUrl);
-    console.log("uploadede image",currentUser.profilePicture);
+    const handleChange = (e) => {
+        setFormInput({...formInput, [e.target.id]: e.target.value });
+    }
+
+    console.log("formInput",formInput);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if(Object.keys(formInput).length === 0) {           
+            return;
+        }
+
+        console.log("form submitted", formInput);
+
+        dispatch(updateStart());
+
+        axiosInstance.put(`/update/${currentUser._id}`, formInput)
+        .then((res) => {
+        console.log('res',res.data);
+        if(res.data.success === true){         
+            dispatch(updateSuccess(res.data.data));
+            dispatch(updateUserSuccess("Profile Updated successfully!"));
+        }
+        })
+        .catch((error) => {
+            console.error('Error Response', error);
+            dispatch(updateFailure(error.response.data.message));
+        });    
+
+        // try {
+            
+        // } catch (error) {
+            
+        // }
+       
+    }
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -70,10 +116,14 @@ export const DashProfile = () =>{
                 if(res.data.success === true){        
                     console.log("res",res.data.data); 
                     setImageFileUrl(res.data.data.profilePicture);
+                    setFormInput({...formInput,profilePicture: res.data.data.profilePicture}); 
                     dispatch(imageUploadSuccess(res.data.data));   
                     setTimeout(() => {
                         dispatch(uploadProgressReset());        
                     }, 500); 
+
+                    // console.log("formInput",formInput);
+
                 }
               })
               .catch((error) => {
@@ -88,7 +138,7 @@ export const DashProfile = () =>{
     return (
         <div className="max-w-lg max-auto p-3 w-full">
             <h1 className="my-7 text-center font-semibold text-3xl">Profile</h1>
-            <form className="flex flex-col gap-4">
+            <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
 
                 <input type="file" accept="/*" onChange={handleImageChange} ref={filePickerRef} hidden/>
 
@@ -121,9 +171,9 @@ export const DashProfile = () =>{
                     </Alert>
                 } 
 
-                <TextInput  type="text" id="username" placeholder="username" defaultValue={currentUser.username} />
-                <TextInput  type="text" id="email" placeholder="email" defaultValue={currentUser.email} />
-                <TextInput  type="text" id="password" placeholder="**********" />
+                <TextInput type="text" id="username" placeholder="username" defaultValue={currentUser.username} onChange={handleChange} />
+                <TextInput  type="text" id="email" placeholder="email" defaultValue={currentUser.email} onChange={handleChange} />
+                <TextInput  type="password" id="password" placeholder="**********" onChange={handleChange} />
                 <Button type="submit" gradientDuoTone="purpleToBlue" outline>
                     Update
                 </Button>
@@ -131,8 +181,12 @@ export const DashProfile = () =>{
             <div className="text-red-500 flex justify-between mt-5">
                 <span className="cursor-pointer">Delete Account</span>
                 <span className="cursor-pointer">Sign Out</span>
-
             </div>
+            {updateSuccessMessage && 
+                <Alert color="success" onDismiss={() => dispatch(dismissImageAlert()) }>
+                    {updateSuccessMessage}
+                </Alert>                    
+            } 
         </div>
     )
 }
