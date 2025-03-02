@@ -1,4 +1,4 @@
-import { Alert, Button, TextInput } from "flowbite-react";
+import { Alert, Button, Modal, TextInput } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import axiosInstance from "../../axios/axios";
@@ -15,6 +15,8 @@ import { imageUploadStart,
     } from "../features/user/userSlice.js";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import { HiOutlineExclamationCircle } from "react-icons/hi";
+
 
 export const DashProfile = () =>{
 
@@ -24,11 +26,8 @@ export const DashProfile = () =>{
   const dispatch = useDispatch();
   const {currentUser,updateUserSuccess:updateSuccessMessage,error: errorMessage,imageFileUploadProgress} = useSelector((state) => state.user);
   const [formInput,setFormInput] = useState({});
-
-    // console.log("imageFileUrl",imageFileUrl);
-    // console.log("uploadede image",currentUser.profilePicture);
-
-    const handleChange = (e) => {
+    const [showModal,setShowModal] = useState(false);
+    const handleChange = (e) => {   
         setFormInput({...formInput, [e.target.id]: e.target.value });
     }
 
@@ -174,19 +173,28 @@ export const DashProfile = () =>{
                 <TextInput type="text" id="username" placeholder="username" defaultValue={currentUser.username} onChange={handleChange} />
                 <TextInput  type="text" id="email" placeholder="email" defaultValue={currentUser.email} onChange={handleChange} />
                 <TextInput  type="password" id="password" placeholder="**********" onChange={handleChange} />
-                <Button type="submit" gradientDuoTone="purpleToBlue" outline>
+                <Button className="cursor-pointer" type="submit" gradientDuoTone="purpleToBlue" outline>
                     Update
                 </Button>
             </form>
             <div className="text-red-500 flex justify-between mt-5">
-                <span className="cursor-pointer">Delete Account</span>
+                <span className="cursor-pointer" onClick={()=>setShowModal(true)}>Delete Account</span>
                 <span className="cursor-pointer">Sign Out</span>
             </div>
             {updateSuccessMessage && 
-                <Alert color="success" onDismiss={() => dispatch(dismissImageAlert()) }>
+                <Alert className="mt-4" color="success" onDismiss={() => dispatch(dismissImageAlert()) }>
                     {updateSuccessMessage}
                 </Alert>                    
             } 
+
+            <Modal show={showModal} onClose={()=>setShowModal(false)} popup size="md"  style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)' }}>
+                <Modal.Header />
+                <Modal.Body>
+                    <div className="text-center">
+                        <HiOutlineExclamationCircle className="h-14 w-14"/>
+                    </div>
+                </Modal.Body>
+            </Modal>
         </div>
     )
 }
