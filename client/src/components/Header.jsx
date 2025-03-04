@@ -7,6 +7,7 @@ import { FaMoon } from "react-icons/fa";
 
 import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme } from "../features/theme/themeSlice";
+import { signoutUserSuccess } from "../features/user/userSlice";
 
 export const Header = () => {
 
@@ -20,7 +21,13 @@ export const Header = () => {
     dispatch(toggleTheme());
   };
 
-  console.log("currentUser",currentUser);
+
+  const handleSignOut = ()=>{
+    dispatch(signoutUserSuccess());
+  }
+  
+
+  // console.log("currentUser",currentUser);
 
   return (
     
@@ -59,7 +66,7 @@ export const Header = () => {
             <Link to={'/dashboard?tab=profile'}>
               <Dropdown.Item>Profile</Dropdown.Item>
               <Dropdown.Divider />
-              <Dropdown.Item>Sign out</Dropdown.Item>
+              <Dropdown.Item onClick={handleSignOut}>Sign out</Dropdown.Item>
             </Link>
           </Dropdown>)
           :

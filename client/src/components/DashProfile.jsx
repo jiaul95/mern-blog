@@ -111,7 +111,7 @@ export const DashProfile = () =>{
         await axiosInstance.post(`/signout`)
         .then((res) => {
             if(res.data.success === true){         
-                dispatch(signoutUserSuccess(res.data.message));
+                dispatch(signoutUserSuccess());
             }
         })
         .catch((error) => {
