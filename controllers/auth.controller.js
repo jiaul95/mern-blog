@@ -281,3 +281,22 @@ export const updateUser = async (req, res, next) => {
   }
 };
 
+
+export const deleteUser = async (req, res, next) => {
+  const userId = req.params.userId;
+  try {
+
+    const deleteUser = await User.findByIdAndDelete(userId);
+    
+    if (deleteUser) {
+        res.status(200).json({
+          success: true,
+          statusCode: 200,
+          message: "User Deleted successfully"
+        });
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+

@@ -11,7 +11,10 @@ import { imageUploadStart,
         updateStart,
         updateSuccess,
         updateFailure,
-        updateUserSuccess
+        updateUserSuccess, 
+        deleteUserStart,
+        deleteUserSuccess,
+        deleteUserFailure 
     } from "../features/user/userSlice.js";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -24,14 +27,19 @@ export const DashProfile = () =>{
   const [imageFileUrl,setImageFileUrl] = useState(null);
   const filePickerRef = useRef(null);
   const dispatch = useDispatch();
-  const {currentUser,updateUserSuccess:updateSuccessMessage,error: errorMessage,imageFileUploadProgress} = useSelector((state) => state.user);
+  const {
+        currentUser,
+        updateUserSuccess:updateSuccessMessage,
+        error: errorMessage,
+        imageFileUploadProgress       
+    } = useSelector((state) => state.user);
   const [formInput,setFormInput] = useState({});
     const [showModal,setShowModal] = useState(false);
     const handleChange = (e) => {   
         setFormInput({...formInput, [e.target.id]: e.target.value });
     }
 
-    console.log("formInput",formInput);
+    // console.log("formInput",formInput);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -46,46 +54,63 @@ export const DashProfile = () =>{
 
         axiosInstance.put(`/update/${currentUser._id}`, formInput)
         .then((res) => {
-        console.log('res',res.data);
-        if(res.data.success === true){         
-            dispatch(updateSuccess(res.data.data));
-            dispatch(updateUserSuccess("Profile Updated successfully!"));
-        }
+            console.log('res',res.data);
+            if(res.data.success === true){         
+                dispatch(updateSuccess(res.data.data));
+                dispatch(updateUserSuccess("Profile Updated successfully!"));
+            }else
+            {
+                dispatch(updateFailure("Failed to update profile!"));
+            }
         })
         .catch((error) => {
             console.error('Error Response', error);
             dispatch(updateFailure(error.response.data.message));
         });    
-
-        // try {
-            
-        // } catch (error) {
-            
-        // }
        
     }
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    
-    if(file.size > 2 * 1024 * 1024){    
-        dispatch(imageUploadFailure("File size should not exceed 2MB!"))        
-        setImageFile(null);
-        setImageFileUrl(null);
-        return;        
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        
+        if(file.size > 2 * 1024 * 1024){    
+            dispatch(imageUploadFailure("File size should not exceed 2MB!"))        
+            setImageFile(null);
+            setImageFileUrl(null);
+            return;        
+        }
+
+        if(file){
+            setImageFile(file);
+            setImageFileUrl(URL.createObjectURL(file));
+        }
     }
 
-    if(file){
-        setImageFile(file);
-        setImageFileUrl(URL.createObjectURL(file));
-    }
-  }
+    const handleDeleteUser = async () => {
 
-  useEffect(() =>{
-    if(imageFile){
-        uploadImage();
+        setShowModal(false);
+
+        dispatch(deleteUserStart());
+
+        await axiosInstance.delete(`/delete/${currentUser._id}`)
+        .then((res) => {
+            if(res.data.success === true){         
+                dispatch(deleteUserSuccess(res.data.message));
+            }else
+            {
+                dispatch(deleteUserFailure("Failed to delete profile!"));
+            }
+        })
+        .catch((error) => {
+            dispatch(updateFailure(error.response.data.message));
+        }); 
     }
-  },[imageFile]);
+
+    useEffect(() =>{
+        if(imageFile){
+            uploadImage();
+        }
+    },[imageFile]);
 
     const uploadImage = async () => {
         
@@ -113,7 +138,7 @@ export const DashProfile = () =>{
               .then((res) => {
                 console.log('res',res.data);
                 if(res.data.success === true){        
-                    console.log("res",res.data.data); 
+                    // console.log("res",res.data.data); 
                     setImageFileUrl(res.data.data.profilePicture);
                     setFormInput({...formInput,profilePicture: res.data.data.profilePicture}); 
                     dispatch(imageUploadSuccess(res.data.data));   
@@ -191,7 +216,24 @@ export const DashProfile = () =>{
                 <Modal.Header />
                 <Modal.Body>
                     <div className="text-center">
-                        <HiOutlineExclamationCircle className="h-14 w-14"/>
+                        <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto"/>
+                        <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
+                            Are you sure you want to delete your account ?
+                        </h3>
+                        <div className="flex justify-center gap-4">
+                            <Button color="failure" onClick={handleDeleteUser}>
+                                Yes, I'm sure
+                            </Button>
+                            <Button color="gray" onClick={() => setShowModal(false)}>No,cancel</Button>
+                        </div>
+                            {
+                                errorMessage && (
+                                    <Alert className="mt-2" color="failure" onDismiss={() => dispatch(dismissImageAlert()) }>
+                                        {errorMessage}
+                                    </Alert>
+                                )
+                            }
+                        
                     </div>
                 </Modal.Body>
             </Modal>
