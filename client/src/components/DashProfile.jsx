@@ -14,7 +14,8 @@ import { imageUploadStart,
         updateUserSuccess, 
         deleteUserStart,
         deleteUserSuccess,
-        deleteUserFailure 
+        deleteUserFailure ,
+        signoutUserSuccess
     } from "../features/user/userSlice.js";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -103,6 +104,18 @@ export const DashProfile = () =>{
         })
         .catch((error) => {
             dispatch(updateFailure(error.response.data.message));
+        }); 
+    }
+
+    const handleSignOut = async () => {
+        await axiosInstance.post(`/signout`)
+        .then((res) => {
+            if(res.data.success === true){         
+                dispatch(signoutUserSuccess(res.data.message));
+            }
+        })
+        .catch((error) => {
+           console.log("error",error);
         }); 
     }
 
@@ -204,7 +217,7 @@ export const DashProfile = () =>{
             </form>
             <div className="text-red-500 flex justify-between mt-5">
                 <span className="cursor-pointer" onClick={()=>setShowModal(true)}>Delete Account</span>
-                <span className="cursor-pointer">Sign Out</span>
+                <span className="cursor-pointer" onClick={handleSignOut}>Sign Out</span>
             </div>
             {updateSuccessMessage && 
                 <Alert className="mt-4" color="success" onDismiss={() => dispatch(dismissImageAlert()) }>
