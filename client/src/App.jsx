@@ -11,6 +11,8 @@ import "./assets/css/theme.css";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { PrivateRoute } from "./components/PrivateRoute.jsx";
+import { OnlyAdminPrivateRoute } from "./components/OnlyAdminPrivateRoute.jsx";
+import { CreatePost } from "./pages/CreatePost.jsx";
 
 
 export default function App() {
@@ -39,6 +41,9 @@ export default function App() {
         <Route path="/sign-up" element={<SignUp />} />
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
+        <Route element={<OnlyAdminPrivateRoute />}>
+          <Route path="/create-post" element={<CreatePost />} />
         </Route>
         <Route path="/projects" element={<Projects />} />
       </Routes>

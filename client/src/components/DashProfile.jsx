@@ -32,7 +32,8 @@ export const DashProfile = () =>{
         currentUser,
         updateUserSuccess:updateSuccessMessage,
         error: errorMessage,
-        imageFileUploadProgress       
+        imageFileUploadProgress,
+        loading       
     } = useSelector((state) => state.user);
   const [formInput,setFormInput] = useState({});
     const [showModal,setShowModal] = useState(false);
@@ -211,9 +212,22 @@ export const DashProfile = () =>{
                 <TextInput type="text" id="username" placeholder="username" defaultValue={currentUser.username} onChange={handleChange} />
                 <TextInput  type="text" id="email" placeholder="email" defaultValue={currentUser.email} onChange={handleChange} />
                 <TextInput  type="password" id="password" placeholder="**********" onChange={handleChange} />
-                <Button className="cursor-pointer" type="submit" gradientDuoTone="purpleToBlue" outline>
-                    Update
+                <Button className="cursor-pointer" type="submit" gradientDuoTone="purpleToBlue" 
+                outline disabled={loading}>
+                    {loading ? "Loading..." : "Update" }
                 </Button>
+
+                {
+                    currentUser.isAdmin && (
+                        <link to={'/create-post'}>
+                            <Button type="button" className="w-full" gradientDuoTone="purpleToPink" 
+                            outline onClick={handleDeleteUser}>
+                                Delete Account
+                            </Button>
+                        </link>
+                    )
+                }
+
             </form>
             <div className="text-red-500 flex justify-between mt-5">
                 <span className="cursor-pointer" onClick={()=>setShowModal(true)}>Delete Account</span>
