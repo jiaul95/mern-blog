@@ -1,0 +1,8 @@
+.custom-editor .rdw-editor-toolbar {
+    @apply bg-gray-100 border border-gray-300 !important; /* Style toolbar */
+  }
+  
+  .custom-editor .rdw-editor-main {
+    @apply p-4 min-h-[200px] border border-gray-300 rounded-lg !important; /* Style editor body */
+  }
+  

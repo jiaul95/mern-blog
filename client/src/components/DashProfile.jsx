@@ -20,6 +20,7 @@ import { imageUploadStart,
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { Link } from "react-router-dom";
 
 
 export const DashProfile = () =>{
@@ -32,7 +33,8 @@ export const DashProfile = () =>{
         currentUser,
         updateUserSuccess:updateSuccessMessage,
         error: errorMessage,
-        imageFileUploadProgress       
+        imageFileUploadProgress,
+        loading       
     } = useSelector((state) => state.user);
   const [formInput,setFormInput] = useState({});
     const [showModal,setShowModal] = useState(false);
@@ -105,6 +107,10 @@ export const DashProfile = () =>{
         .catch((error) => {
             dispatch(updateFailure(error.response.data.message));
         }); 
+    }
+
+    const handleCreatePost = async (e) => {
+        e.preventDefault();
     }
 
     const handleSignOut = async () => {
@@ -211,9 +217,24 @@ export const DashProfile = () =>{
                 <TextInput type="text" id="username" placeholder="username" defaultValue={currentUser.username} onChange={handleChange} />
                 <TextInput  type="text" id="email" placeholder="email" defaultValue={currentUser.email} onChange={handleChange} />
                 <TextInput  type="password" id="password" placeholder="**********" onChange={handleChange} />
-                <Button className="cursor-pointer" type="submit" gradientDuoTone="purpleToBlue" outline>
-                    Update
+                <Button className="cursor-pointer" type="submit" gradientDuoTone="purpleToBlue" 
+                outline disabled={loading}>
+                    {loading ? "Loading..." : "Update" }
                 </Button>
+
+                {
+                    currentUser.isAdmin && (
+                        <Link to={'/create-post'}>
+                            <Button type="button" className="w-full" gradientDuoTone="purpleToPink" 
+                            outline 
+                            // onClick={handleCreatePost}
+                            >
+                                Create a Account
+                            </Button>
+                        </Link>
+                    )
+                }
+
             </form>
             <div className="text-red-500 flex justify-between mt-5">
                 <span className="cursor-pointer" onClick={()=>setShowModal(true)}>Delete Account</span>
