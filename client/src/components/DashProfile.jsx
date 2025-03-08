@@ -20,6 +20,7 @@ import { imageUploadStart,
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { Link } from "react-router-dom";
 
 
 export const DashProfile = () =>{
@@ -106,6 +107,10 @@ export const DashProfile = () =>{
         .catch((error) => {
             dispatch(updateFailure(error.response.data.message));
         }); 
+    }
+
+    const handleCreatePost = async (e) => {
+        e.preventDefault();
     }
 
     const handleSignOut = async () => {
@@ -219,12 +224,14 @@ export const DashProfile = () =>{
 
                 {
                     currentUser.isAdmin && (
-                        <link to={'/create-post'}>
+                        <Link to={'/create-post'}>
                             <Button type="button" className="w-full" gradientDuoTone="purpleToPink" 
-                            outline onClick={handleDeleteUser}>
-                                Delete Account
+                            outline 
+                            // onClick={handleCreatePost}
+                            >
+                                Create a Account
                             </Button>
-                        </link>
+                        </Link>
                     )
                 }
 
