@@ -1,8 +1,14 @@
-import { Button, FileInput, Select, TextInput } from "flowbite-react"
-// import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import { Button, FileInput, Select, TextInput } from "flowbite-react";
+import { useState } from "react";
+import { EditorState } from "draft-js";
+import { Editor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 export const CreatePost = () => {
+
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  
+
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">
@@ -24,7 +30,20 @@ export const CreatePost = () => {
               <FileInput type="file" accept="image/*" />
               <Button type="button" gradientDuoTone="purpleToBlue" size="sm" outline> Upload Image </Button>
           </div>
-          {/* <ReactQuill theme="snow" placeholder="Write Something..." className="h-72 mb-12" /> */}
+           <div >
+              <Editor
+                  editorState={editorState}
+                  onEditorStateChange={setEditorState}
+                  wrapperClassName="custom-editor"
+                  editorClassName="bg-white p-4 min-h-[200px] border border-gray-300 rounded-lg"
+                  placeholder="Write something...."
+                  required
+                />
+            </div>
+            
+            <Button type="submit" gradientDuoTone="purpleToPink">
+                    Publish
+                </Button>
       </form>
 
     </div>
