@@ -163,15 +163,13 @@ export const uploadProfileImage = async (req, res,next) => {
   // console.log(req.body);return;
 
   // Create uploads directory if not exists
-  const uploadDir = "uploads";
+  const uploadDir = "uploads/profileImage";
   if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir);
   }
 
   upload(req, res, async (err) => {
     if (err) {
-      console.log("error",err);
-      // return res.status(500).json({ error: "File upload failed!", details: err });
       return next(errorHandler(500,"File upload failed!"));
 
     }

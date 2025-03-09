@@ -42,8 +42,6 @@ export const DashProfile = () =>{
         setFormInput({...formInput, [e.target.id]: e.target.value });
     }
 
-    // console.log("formInput",formInput);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -109,9 +107,6 @@ export const DashProfile = () =>{
         }); 
     }
 
-    const handleCreatePost = async (e) => {
-        e.preventDefault();
-    }
 
     const handleSignOut = async () => {
         await axiosInstance.post(`/signout`)
