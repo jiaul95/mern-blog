@@ -224,7 +224,7 @@ export const DashProfile = () =>{
                             outline 
                             // onClick={handleCreatePost}
                             >
-                                Create a Account
+                                Create Post
                             </Button>
                         </Link>
                     )

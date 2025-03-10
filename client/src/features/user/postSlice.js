@@ -26,7 +26,8 @@ export const postSlice = createSlice({
     },     
     dismissImageAlert:(state) => {
       state.error = null;
-      state.updateUserSuccess = null;
+      state.createPostSuccess = null;
+      state.loading = false;      
     },
     successAlert: (state,action) => {
       state.createPostSuccess = action.payload;

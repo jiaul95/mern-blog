@@ -41,13 +41,19 @@ export const create = async (req, res, next) => {
       return next(errorHandler(403, "You are not allowed to create posts"));
     }
 
+    // return;
     // Extract form data (assuming it’s sent as JSON in FormData)
     const formInput = JSON.parse(req.body.formInput || "{}");
+    // const formInput = req.body || "{}";
+
+    // console.log(req.file);
+    // console.log(req.body);
+
 
     if (!formInput.title || !formInput.content) {
       return next(errorHandler(422, "Please provide all required fields"));
     }
-
+// console.log("formInput",formInput);return;
     // Generate a SEO-friendly slug
     const slug = formInput.title
       .split(" ")
@@ -55,13 +61,17 @@ export const create = async (req, res, next) => {
       .toLowerCase()
       .replace(/[^a-zA-Z0-9-]/g, "-");
 
+    const imageUrl = req.file
+    ? `${req.protocol}://${req.get("host")}/uploads/posts/${req.file.filename}`
+    : null;
+
     try {
       // Create New Post with Image URL (if uploaded)
       const newPost = await Post.create({
         ...formInput,
         slug,
         userId: req.user.id,
-        imageUrl: req.file ? `/uploads/post/${req.file.filename}` : null, 
+        image: imageUrl, 
       });
 
       if (newPost) {

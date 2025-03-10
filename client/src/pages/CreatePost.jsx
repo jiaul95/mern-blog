@@ -22,7 +22,7 @@ export const CreatePost = () => {
     loading       
 } = useSelector((state) => state.post);
 
-
+  console.log("loading",loading);
  
 
   const handleChange = (e) => {   
@@ -60,11 +60,11 @@ export const CreatePost = () => {
      
 
 
-        console.log("form submitted", formInput);
+        // console.log("form submitted", formData); return;
 
         dispatch(publishPostStart());
 
-        axiosInstance.post(`/post/create`, formInput,
+        axiosInstance.post(`/post/create`, formData,
           {
             headers: {
               'Content-Type': 'multipart/form-data',
