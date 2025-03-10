@@ -131,6 +131,15 @@ export const CreatePost = () => {
           {imageFileUrl && 
             <img src={imageFileUrl} alt="post-image" id="image" className="w-full h-[250px] object-cover" onChange={handleChange} />
           }
+
+            {
+                errorMessage && (
+                    <Alert className="mt-2" color="failure" onDismiss={() => dispatch(dismissImageAlert()) }>
+                        {errorMessage}
+                    </Alert>
+                )
+            }
+
            <div className="editor">
               <Editor
                   editorState={editorState}
@@ -146,15 +155,6 @@ export const CreatePost = () => {
                         {successMessage}
                     </Alert>                    
                 } 
-
-                 {
-                    errorMessage && (
-                        <Alert className="mt-2" color="failure" onDismiss={() => dispatch(dismissImageAlert()) }>
-                            {errorMessage}
-                        </Alert>
-                    )
-                }
-            
             
             <Button type="submit" gradientDuoTone="purpleToPink" disabled={loading}>
                   { loading ? "Loading" : "Publish" }
