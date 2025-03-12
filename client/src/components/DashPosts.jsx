@@ -1,4 +1,4 @@
-import { Table} from "flowbite-react";
+import { Button, Table} from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import axiosInstance from "../../axios/axios.js";
@@ -15,7 +15,7 @@ export const DashPosts = () =>{
     
       const  {currentUser} = useSelector((state) => state.user);
       const  {allPosts} = useSelector((state) => state.post);
-
+      const [showMore,setShowMore] = useState(true);
       console.log('posts length',allPosts);
 
 
@@ -26,6 +26,9 @@ export const DashPosts = () =>{
              .then((res) => {
                 if(res.data.success === true){         
                     dispatch(postFetchSuccess(res.data.data.posts));
+                    if(res.data.data.posts.length > 9){
+                        setShowMore(false);
+                    }
                 }else
                 {
                     dispatch(postFetchFailure("Failed to fetch posts!"));
@@ -95,6 +98,15 @@ export const DashPosts = () =>{
                                 
                             ))}
                     </Table>
+                    {
+                        showMore && (
+                            <Button onClick={handleShowMore} className="w-full text-teal-500 self-center text-sm 
+                            py-7
+                            ">
+                                Show more
+                            </Button>
+                          
+                        )}
                 </>                
             ) : (
                 <p>You have no posts yet</p>

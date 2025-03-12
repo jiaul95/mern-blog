@@ -220,7 +220,7 @@ export const DashProfile = () =>{
                 {
                     currentUser.isAdmin && (
                         <Link to={'/create-post'}>
-                            <Button type="button" className="w-full" gradientDuoTone="purpleToPink" 
+                            <Button type="button" className="w-full cursor-pointer" gradientDuoTone="purpleToPink" 
                             outline 
                             // onClick={handleCreatePost}
                             >

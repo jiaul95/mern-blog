@@ -75,7 +75,9 @@ export const CreatePost = () => {
             console.log('res',res.data);
             if(res.data.success === true){         
                 dispatch(publishPostSuccess(res.data.data));
-                dispatch(successAlert("Profile Updated successfully!"));
+                dispatch(successAlert("Profile Updated successfully!"));                
+                setImageFileUrl(null);
+                setFormInput({}); 
             }else
             {
               dispatch(publishPostFailure("Failed to update profile!"));
