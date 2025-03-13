@@ -103,7 +103,7 @@ export const DashProfile = () =>{
             }
         })
         .catch((error) => {
-            dispatch(updateFailure(error.response.data.message));
+            dispatch(deleteUserFailure(error.response.data.message));
         }); 
     }
 

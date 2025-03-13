@@ -48,7 +48,24 @@ export const postSlice = createSlice({
     postFetchFailure: (state,action) => {
       state.loading = false;
       state.error = action.payload;
-    }
+    },
+
+    deletePostStart:(state) => {
+      state.error = null;
+      state.loading = true;
+      state.currentUser = null;
+    },
+
+    deletePostSuccess:(state) => {
+      state.error = null;
+      state.loading = false;
+      state.currentUser = null;
+    },
+
+    deletePostFailure:(state,action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 })
 
@@ -60,7 +77,10 @@ export const {
               successAlert,
               imageUploadFailure,
               postFetchSuccess,
-              postFetchFailure
+              postFetchFailure,
+              deletePostStart,
+              deletePostSuccess,
+              deletePostFailure
               } = postSlice.actions
 
 export default postSlice.reducer

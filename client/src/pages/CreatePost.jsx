@@ -1,5 +1,5 @@
 import { Alert, Button, FileInput, Select, TextInput } from "flowbite-react";
-import { useState } from "react";
+import { useState,useRef } from "react";
 import { EditorState, convertToRaw } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -12,7 +12,10 @@ import { useDispatch, useSelector } from "react-redux";
 export const CreatePost = () => {
 
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const [formInput, setFormInput] = useState({});  
+  const [formInput, setFormInput] = useState({
+    title: "",
+    category:""
+  });  
   const [imageFile,setImageFile] = useState(null);
   const [imageFileUrl,setImageFileUrl] = useState(null);
   const dispatch = useDispatch();
@@ -22,7 +25,9 @@ export const CreatePost = () => {
     loading       
 } = useSelector((state) => state.post);
 
-  console.log("loading",loading);
+const fileInputRef = useRef(null);
+
+  // console.log("loading",loading);
  
 
   const handleChange = (e) => {   
@@ -36,9 +41,7 @@ export const CreatePost = () => {
     setFormInput({...formInput, content: contentHTML });
   };
 
-
-  console.log("form input", formInput);
-
+  // console.log("form input", formInput);
 
     const handleCreatePost = async (e) => {
       
@@ -56,11 +59,7 @@ export const CreatePost = () => {
         }
         const formData = new FormData();
         formData.append("postImage", imageFile);  
-        formData.append("formInput", JSON.stringify(formInput));      
-     
-
-
-        // console.log("form submitted", formData); return;
+        formData.append("formInput", JSON.stringify(formInput));    
 
         dispatch(publishPostStart());
 
@@ -75,9 +74,17 @@ export const CreatePost = () => {
             console.log('res',res.data);
             if(res.data.success === true){         
                 dispatch(publishPostSuccess(res.data.data));
-                dispatch(successAlert("Profile Updated successfully!"));                
+                dispatch(successAlert(res.data.message));                
                 setImageFileUrl(null);
-                setFormInput({}); 
+                setFormInput({ 
+                  title: "",
+                  category:"" 
+                });
+                if(fileInputRef.current){
+                  fileInputRef.current.value = null;
+                }
+                setImageFile(null);
+                setEditorState(EditorState.createEmpty());
             }else
             {
               dispatch(publishPostFailure("Failed to update profile!"));
@@ -118,8 +125,8 @@ export const CreatePost = () => {
 
       <form className="flex flex-col gap-4" onSubmit={handleCreatePost}>
           <div className="flex flex-col gap-4 sm:flex-row justify-between">
-              <TextInput type="text" placeholder="Title" required id="title" className="flex-1" onChange={handleChange} />
-              <Select id="category" onChange={handleChange}>
+              <TextInput type="text" placeholder="Title" required id="title" className="flex-1" onChange={handleChange} value={formInput.title} />
+              <Select id="category" onChange={handleChange} value={formInput.category}>
                   <option value="uncategorized">Select a category</option>
                   <option value="reactjs">React.js</option>
                   <option value="javascript">JavaScript</option>
@@ -128,7 +135,7 @@ export const CreatePost = () => {
           </div>
 
           <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3"> 
-              <FileInput type="file" accept="image/*" onChange={handleImageChange} />
+              <FileInput type="file" accept="image/*" onChange={handleImageChange} ref={fileInputRef} />
           </div>
           {imageFileUrl && 
             <img src={imageFileUrl} alt="post-image" id="image" className="w-full h-[250px] object-cover" onChange={handleChange} />
