@@ -2,18 +2,16 @@ import User from "../models/user.model.js";
 import Post from "../models/post.model.js";
 
 import bcrypt from "bcryptjs";
-import errorHandler from "../utils/customError.js"
+import errorHandler from "../utils/customError.js";
 import jwt from "jsonwebtoken";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-
-
 // Create uploads directory if not exists
 const uploadDir = "uploads/posts";
 if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
+  fs.mkdirSync(uploadDir);
 }
 
 // Configure Multer Storage for Posts
@@ -29,7 +27,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage }).single("postImage");
 
 export const create = async (req, res, next) => {
-
   // Upload Image First
   upload(req, res, async (err) => {
     if (err) {
@@ -49,11 +46,10 @@ export const create = async (req, res, next) => {
     // console.log(req.file);
     // console.log(req.body);
 
-
     if (!formInput.title || !formInput.content) {
       return next(errorHandler(422, "Please provide all required fields"));
     }
-// console.log("formInput",formInput);return;
+    // console.log("formInput",formInput);return;
     // Generate a SEO-friendly slug
     const slug = formInput.title
       .split(" ")
@@ -62,8 +58,10 @@ export const create = async (req, res, next) => {
       .replace(/[^a-zA-Z0-9-]/g, "-");
 
     const imageUrl = req.file
-    ? `${req.protocol}://${req.get("host")}/uploads/posts/${req.file.filename}`
-    : null;
+      ? `${req.protocol}://${req.get("host")}/uploads/posts/${
+          req.file.filename
+        }`
+      : null;
 
     try {
       // Create New Post with Image URL (if uploaded)
@@ -71,7 +69,7 @@ export const create = async (req, res, next) => {
         ...formInput,
         slug,
         userId: req.user.id,
-        image: imageUrl, 
+        image: imageUrl,
       });
 
       if (newPost) {
@@ -88,24 +86,26 @@ export const create = async (req, res, next) => {
   });
 };
 
-
-export const getPosts = async (req,res,next) =>{
+export const getPosts = async (req, res, next) => {
   try {
     const offset = parseInt(req.query.offset) || 0;
     const limit = parseInt(req.query.limit) || 9;
     const order = req.query.order == "asc" ? 1 : -1;
     const posts = await Post.find({
-      ...(req.query.userId && {userId: req.query.userId}),
-      ...(req.query.category && {category: req.query.category}),
-      ...(req.query.slug && {slug: req.query.slug}),
-      ...(req.query.postId && {_id: req.query.postId}),
+      ...(req.query.userId && { userId: req.query.userId }),
+      ...(req.query.category && { category: req.query.category }),
+      ...(req.query.slug && { slug: req.query.slug }),
+      ...(req.query.postId && { _id: req.query.postId }),
       ...(req.query.searchTerm && {
         $or: [
-          {title: { $regex: req.query.searchTerm, $options: "i" }},
-          {content: { $regex: req.query.searchTerm, $options: "i" }},
+          { title: { $regex: req.query.searchTerm, $options: "i" } },
+          { content: { $regex: req.query.searchTerm, $options: "i" } },
         ],
-      })
-    }).sort({updatedAt: order}).skip(offset).limit(limit);
+      }),
+    })
+      .sort({ updatedAt: order })
+      .skip(offset)
+      .limit(limit);
 
     const totalPosts = await Post.countDocuments();
 
@@ -118,7 +118,7 @@ export const getPosts = async (req,res,next) =>{
     );
 
     const lastMonthPosts = await Post.countDocuments({
-      createdAt: {$gte: oneMonthsAgo}
+      createdAt: { $gte: oneMonthsAgo },
     });
 
     res.status(200).json({
@@ -130,36 +130,116 @@ export const getPosts = async (req,res,next) =>{
         totalPosts,
         lastMonthPosts,
       },
-    })
-    
+    });
   } catch (error) {
     next(error);
   }
-}
+};
 
-export const deletePost = async(req, res, next) =>{
+export const deletePost = async (req, res, next) => {
+  if (!req.user.isAdmin || req.user.id !== req.params.userId) {
+    return next(errorHandler(403, "You are not allowed to delete this post"));
+  }
 
+  try {
+    const deletePost = await Post.findByIdAndDelete(req.params.postId);
 
-    if(!req.user.isAdmin || req.user.id !== req.params.userId){
-      return next(errorHandler(403, "You are not allowed to delete this post"));
+    if (deletePost) {
+      res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: "Post deleted successfully",
+        data: deletePost,
+      });
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+// export const updatePost = async (req, res, next) => {
+//   if (!req.user.isAdmin && req.user.id !== req.params.userId) {
+//     return next(errorHandler(403, "You are not allowed to update this post"));
+//   }
+
+//   try {
+
+//     const formInput = JSON.parse(req.body.formInput || "{}");
+
+//     console.log("formInput",req.body);
+//     return;
+//     const updatePost = await Post.findByIdAndUpdate(
+//       req.params.postId,
+//       {
+//         $set: {
+//           title: formInput.title,
+//           content: formInput.content,
+//           category: formInput.category,
+//           image: formInput.image,
+//         },
+//       },
+//       { new: true }
+//     );
+
+//     if (updatePost) {
+//       res.status(200).json({
+//         success: true,
+//         statusCode: 200,
+//         message: "Post updated successfully",
+//         data: updatePost,
+//       });
+//     }
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+export const updatePost = async (req, res, next) => {  
+  upload(req, res, async (err) => {
+    if (err) {
+      return next(errorHandler(500, "Error uploading file"));
+    }
+
+    if (!req.user.isAdmin && req.user.id !== req.params.userId) {
+      return next(errorHandler(403, "You are not allowed to update this post"));
+    }
+    const formInput = JSON.parse(req.body.formInput || "{}");
+
+    const imageUrl = req.file
+      ? `${req.protocol}://${req.get("host")}/uploads/posts/${
+          req.file.filename
+        }`
+      : null;
 
     try {
-      
-        const deletePost = await Post.findByIdAndDelete(req.params.postId);        
+      const updatedPost = await Post.findByIdAndUpdate(
+        req.params.postId,
+        {
+          $set: {
+            title: formInput.title,
+            content: formInput.content,
+            category: formInput.category,
+            ...(imageUrl && { image: imageUrl }),
+          },
+        },
+        { new: true }
+      );
 
-        if(deletePost){
-          res.status(200).json({
-            success: true,
-            statusCode: 200,
-            message: "Post deleted successfully",
-            data: deletePost,
-          });
-        }
-    }catch (error) {
-      next(error);
+      if (updatedPost) {
+        res.status(200).json({
+          success: true,
+          statusCode: 200,
+          message: "Post updated successfully",
+          data: updatedPost,
+        });
+      } else {
+        res.status(404).json({
+          success: false,
+          message: "Post not found",
+        });
+      }
+    } catch (error) {
+      return next(errorHandler(500, error?.message || "Something went wrong!"));
     }
-
-}
-
-
+  });
+};

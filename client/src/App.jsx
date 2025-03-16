@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import { PrivateRoute } from "./components/PrivateRoute.jsx";
 import { OnlyAdminPrivateRoute } from "./components/OnlyAdminPrivateRoute.jsx";
 import { CreatePost } from "./pages/CreatePost.jsx";
+import { UpdatePost } from "./pages/UpdatePost.jsx";
 
 
 export default function App() {
@@ -44,6 +45,7 @@ export default function App() {
         </Route>
         <Route element={<OnlyAdminPrivateRoute />}>
           <Route path="/create-post" element={<CreatePost />} />
+          <Route path="/update-post/:postId" element={<UpdatePost/>} />
         </Route>
         <Route path="/projects" element={<Projects />} />
       </Routes>
