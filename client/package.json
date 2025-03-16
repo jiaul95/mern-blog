@@ -14,6 +14,8 @@
     "@tailwindcss/vite": "^4.0.7",
     "axios": "^1.7.9",
     "draft-js": "^0.11.7",
+    "draft-js-import-html": "^1.4.1",
+    "draftjs-to-html": "^0.9.1",
     "firebase": "^11.3.1",
     "flowbite-react": "^0.10.2",
     "global": "^4.4.0",
@@ -24,6 +26,7 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.1.5",
     "redux-persist": "^6.0.0",
+    "tailwind-scrollbar": "^4.0.1",
     "tailwindcss": "^4.0.7"
   },
   "devDependencies": {

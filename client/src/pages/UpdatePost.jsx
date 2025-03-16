@@ -1,21 +1,24 @@
 import { Alert, Button, FileInput, Select, TextInput } from "flowbite-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { EditorState, convertToRaw } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import draftToHtml from "draftjs-to-html";
+import { stateFromHTML } from "draft-js-import-html";
 import axiosInstance from "../../axios/axios";
-import {
+import {  
+  updatePostStart,
+  updatePostSuccess,
+  updatePostFailure,
   dismissImageAlert,
   imageUploadFailure,
-  publishPostFailure,
-  publishPostStart,
-  publishPostSuccess,
   successAlert,
+
 } from "../features/user/postSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
-export const CreatePost = () => {
+export const UpdatePost = () => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [formInput, setFormInput] = useState({
     title: "",
@@ -30,9 +33,26 @@ export const CreatePost = () => {
     loading,
   } = useSelector((state) => state.post);
 
+  const  {currentUser} = useSelector((state) => state.user);
+
+
   const fileInputRef = useRef(null);
 
-  // console.log("loading",loading);
+  const { postId } = useParams();
+
+  useEffect(() => {
+    axiosInstance
+      .get(`/post/getPosts?postId=${postId}`)
+      .then((res) => {
+        const { title, category, content, image } = res.data.data.posts[0];
+        setFormInput({ title, category });
+        setEditorState(EditorState.createWithContent(stateFromHTML(content)));
+        setImageFileUrl(image);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, [postId]);
 
   const handleChange = (e) => {
     setFormInput({ ...formInput, [e.target.id]: e.target.value });
@@ -45,55 +65,50 @@ export const CreatePost = () => {
     setFormInput({ ...formInput, content: contentHTML });
   };
 
-  // console.log("form input", formInput);
-
-  const handleCreatePost = async (e) => {
+  const handleUpdatePost = async (e) => {
     e.preventDefault();
 
     if (Object.keys(formInput).length === 0) {
       return;
     }
-    if (!imageFile) {
-      return dispatch(publishPostFailure("Please select an image"));
+    if (imageFile && imageFile.type.split("/")[0] !== "image") {
+      return dispatch(updatePostFailure("Please select an image"));
     }
 
-    if (imageFile.type.split("/")[0] !== "image") {
-      return dispatch(publishPostFailure("Please select an image"));
-    }
     const formData = new FormData();
-    formData.append("postImage", imageFile);
-    formData.append("formInput", JSON.stringify(formInput));
 
-    dispatch(publishPostStart());
+
+    if(imageFile){
+      formData.append("postImage", imageFile ?? null);
+    }
+    formData.append("formInput", JSON.stringify(formInput));   
+
+    dispatch(updatePostStart());
 
     axiosInstance
-      .post(`/post/create`, formData, {
+      .put(`/post/updatePost/${postId}/${currentUser._id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       })
       .then((res) => {
-        console.log("res", res.data);
         if (res.data.success === true) {
-          dispatch(publishPostSuccess(res.data.data));
+          dispatch(updatePostSuccess(res.data.data));
           dispatch(successAlert(res.data.message));
-          setImageFileUrl(null);
-          setFormInput({
-            title: "",
-            category: "",
-          });
-          if (fileInputRef.current) {
-            fileInputRef.current.value = null;
-          }
-          setImageFile(null);
-          setEditorState(EditorState.createEmpty());
+          console.log("Success",res.data);
+
+          // setFormInput({ ...formInput, title: res.data.data.title });
+          // setFormInput({ ...formInput, category: res.data.data.category });  
+          // const contentState = stateFromHTML(res.data.data.content);
+          // setEditorState(EditorState.createWithContent(contentState)); 
+          // setImageFileUrl(res.data.data.image);
         } else {
-          dispatch(publishPostFailure("Failed to update profile!"));
+          dispatch(updatePostSuccess("Failed to update profile!"));
         }
       })
       .catch((error) => {
         console.error("Error Response", error);
-        dispatch(publishPostFailure(error.response.data.message));
+        dispatch(updatePostFailure(error.response.data.message));
       });
   };
 
@@ -115,9 +130,9 @@ export const CreatePost = () => {
 
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
-      <h1 className="text-center text-3xl my-7 font-semibold">Create Post</h1>
+      <h1 className="text-center text-3xl my-7 font-semibold">Update Post</h1>
 
-      <form className="flex flex-col gap-4" onSubmit={handleCreatePost}>
+      <form className="flex flex-col gap-4" onSubmit={handleUpdatePost}>
         <div className="flex flex-col gap-4 sm:flex-row justify-between">
           <TextInput
             type="text"
@@ -188,8 +203,9 @@ export const CreatePost = () => {
           </Alert>
         )}
 
-        <Button type="submit" gradientDuoTone="purpleToPink" disabled={loading}>
-          {loading ? "Loading" : "Publish"}
+        <Button type="submit" gradientDuoTone="purpleToPink">
+          {/* {loading ? "Loading" : "Update"} */}
+          Update
         </Button>
       </form>
     </div>

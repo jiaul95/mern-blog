@@ -1,16 +1,7 @@
-// export default {
-//   darkMode: 'class',
-//   content: [
-//     flowbite.content(),
-//     "./src/**/*.{js,ts,jsx,tsx}",
-//   ],
-//   theme: {
-//     extend: {},
-//   },
-//   plugins: [
-//     flowbite.plugin(),
-//   ],
-// }
+
+
+// @plugin 'tailwind-scrollbar';
+
 
 
 /** @type {import('tailwindcss').Config} */
@@ -22,5 +13,9 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    flowbite.plugin(),
+    require("tailwind-scrollbar"),
+
+  ],
 };

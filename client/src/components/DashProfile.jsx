@@ -42,8 +42,6 @@ export const DashProfile = () =>{
         setFormInput({...formInput, [e.target.id]: e.target.value });
     }
 
-    // console.log("formInput",formInput);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -105,13 +103,10 @@ export const DashProfile = () =>{
             }
         })
         .catch((error) => {
-            dispatch(updateFailure(error.response.data.message));
+            dispatch(deleteUserFailure(error.response.data.message));
         }); 
     }
 
-    const handleCreatePost = async (e) => {
-        e.preventDefault();
-    }
 
     const handleSignOut = async () => {
         await axiosInstance.post(`/signout`)
@@ -225,11 +220,11 @@ export const DashProfile = () =>{
                 {
                     currentUser.isAdmin && (
                         <Link to={'/create-post'}>
-                            <Button type="button" className="w-full" gradientDuoTone="purpleToPink" 
+                            <Button type="button" className="w-full cursor-pointer" gradientDuoTone="purpleToPink" 
                             outline 
                             // onClick={handleCreatePost}
                             >
-                                Create a Account
+                                Create Post
                             </Button>
                         </Link>
                     )
