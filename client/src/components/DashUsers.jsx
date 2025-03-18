@@ -5,9 +5,10 @@ import axiosInstance from "../../axios/axios.js";
 import {
   userFetchSuccess,
   userFetchFailure,
-  // deleteUserStart,
-  // deleteUserSccess,
-  // deleteUserFailure
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure,
+  dismissImageAlert
 } from "../features/user/userSlice.js";
 import { Link } from "react-router-dom";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
@@ -21,42 +22,42 @@ export const DashUsers = () => {
 
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  // const [userIdToDelete, setUserIdToDelete] = useState("");
+  const [userIdToDelete, setUserIdToDelete] = useState("");
   // useEffect(() => {
   //     console.log("Updated Posts List:", allPosts.map((p) => p._id));
   // }, [allPosts]);
 
-  // const handleShowModal = (userId) => {
-  //   setShowModal(true);
-  //   setUserIdToDelete(userId);
-  // };
+  const handleShowModal = (userId) => {
+    setShowModal(true);
+    setUserIdToDelete(userId);
+  };
 
   const handleDeleteUser = async () => {
     setShowModal(false);
 
-    // dispatch(deletePostStart());
+    dispatch(deleteUserStart());
 
-    // await axiosInstance
-    //   .delete(`/user/deletePost/${postIdToDelete}/${currentUser._id}`)
-    //   .then((res) => {
-    //     if (res.data.success === true) {
-    //       const newData = Array.isArray(res.data.data)
-    //         ? res.data.data
-    //         : [res.data.data];
+    await axiosInstance
+      .delete(`/user/deleteUser/${userIdToDelete}`)
+      .then((res) => {
+        if (res.data.success === true) {
+          const newData = Array.isArray(res.data.data)
+            ? res.data.data
+            : [res.data.data];
 
-    //       const updatedPosts = allPosts
-    //         .filter((user) => user._id !== postIdToDelete)
-    //         .concat(newData);
+          const updatedUsers = allUsers
+            .filter((user) => user._id !== userIdToDelete)
+            .concat(newData);
 
-    //       dispatch(deletePostSuccess(res.data.message));
-    //       dispatch(postFetchSuccess(updatedPosts));
-    //     } else {
-    //       dispatch(deletePostFailure("Failed to delete profile!"));
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     dispatch(deletePostFailure(error.response.data.message));
-    //   });
+          dispatch(deleteUserSuccess(res.data.message));
+          dispatch(userFetchSuccess(updatedUsers));
+        } else {
+          dispatch(deleteUserFailure("Failed to delete profile!"));
+        }
+      })
+      .catch((error) => {
+        dispatch(deleteUserFailure(error.response.data.message));
+      });
   };
 
   useEffect(() => {
