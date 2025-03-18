@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { HiUser } from "react-icons/hi";
 import { HiArrowSmRight } from "react-icons/hi";
 import { HiDocumentText } from "react-icons/hi";
+import { HiOutlineUserGroup } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { signoutUserSuccess } from "../features/user/userSlice";
@@ -40,14 +41,21 @@ export const DashSidebar = () =>{
                         </Sidebar.Item>
                     </Link>
 
-                    {
-                      currentUser.isAdmin && (
-                      <Link to='/dashboard?tab=posts'>
-                          <Sidebar.Item active={tab==="profile"} icon={HiDocumentText} as="div">
-                              Posts
-                          </Sidebar.Item>
-                      </Link>)}                    
+                    {currentUser.isAdmin && (                        
+                        <Link to='/dashboard?tab=posts'>
+                            <Sidebar.Item active={tab==="posts"} icon={HiDocumentText} as="div">
+                                Posts
+                            </Sidebar.Item>
+                        </Link>
+                    )}       
 
+                    {currentUser.isAdmin && (
+                        <Link to='/dashboard?tab=users'>
+                          <Sidebar.Item active={tab==="users"} icon={HiOutlineUserGroup} as="div">
+                              Users
+                          </Sidebar.Item>
+                        </Link>
+                    )}
                    
                     <Sidebar.Item icon={HiArrowSmRight} className="cursor-pointer" onClick={handleSignOut}>
                         Sign Out

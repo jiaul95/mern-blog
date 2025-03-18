@@ -7,6 +7,8 @@ const initialState = {
     profilePicture: null,
     progressBar: 0,
     updateUserSuccess:null,
+    allUsers:[]
+
  
 }
 
@@ -93,10 +95,35 @@ export const userSlice = createSlice({
       state.currentUser = null;
       state.error = null;
       state.loading = false;
-    }
-  
-   
+    },
 
+    
+    userFetchSuccess: (state,action) => {
+      state.allUsers = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    userFetchFailure: (state,action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    
+    deletePostStart:(state) => {
+      state.error = null;
+      state.loading = true;
+      state.currentUser = null;
+    },
+
+    deletePostSuccess:(state) => {
+      state.error = null;
+      state.loading = false;
+      state.currentUser = null;
+    },
+
+    deletePostFailure:(state,action) => {
+      state.loading = false;
+      state.error = action.payload;
+    }
     
   },
 })
@@ -118,7 +145,9 @@ export const { signInStart,
                 deleteUserStart,
                 deleteUserSuccess,
                 deleteUserFailure,
-                signoutUserSuccess
+                signoutUserSuccess,
+                userFetchSuccess,
+                userFetchFailure
               } = userSlice.actions
 
 export default userSlice.reducer

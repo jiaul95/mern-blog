@@ -74,9 +74,6 @@ export const Header = () => {
             <Button gradientDuoTone="purpleToBlue" outline>Sign In</Button>
           </Link>
         }
-
-
-       
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>

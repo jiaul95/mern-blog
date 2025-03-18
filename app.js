@@ -3,11 +3,9 @@ import morgan from "morgan";
 import cors from "cors";
 import authRoute from "./routes/auth.route.js";
 import postRoute from "./routes/post.route.js";
-
+import userRoute from "./routes/user.route.js";
 import errorResponse from "./middlewares/error.middleware.js";
 import cookieParser from "cookie-parser";
-// import bodyParser from "body-parser";
-
 
 const app = express();
 
@@ -28,6 +26,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1",authRoute);
 app.use("/api/v1/post",postRoute);
+app.use("/api/v1/user",userRoute);
 
 
 app.use(errorResponse);
