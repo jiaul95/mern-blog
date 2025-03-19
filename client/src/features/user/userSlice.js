@@ -75,19 +75,18 @@ export const userSlice = createSlice({
       state.updateUserSuccess = null;
     },
 
-    deleteUserStart:(state) => {
+    deleteAdminUserStart:(state) => {
       state.error = null;
       state.loading = true;
-      state.currentUser = null;
     },
 
-    deleteUserSuccess:(state) => {
+    deleteAdminUserSuccess:(state) => {
       state.error = null;
       state.loading = false;
       state.currentUser = null;
     },
 
-    deleteUserFailure:(state,action) => {
+    deleteAdminUserFailure:(state,action) => {
       state.loading = false;
       state.error = action.payload;
     },
@@ -111,7 +110,6 @@ export const userSlice = createSlice({
     deletePostStart:(state) => {
       state.error = null;
       state.loading = true;
-      state.currentUser = null;
     },
 
     deletePostSuccess:(state) => {
@@ -128,13 +126,11 @@ export const userSlice = createSlice({
     deleteUserStart:(state) => {
       state.error = null;
       state.loading = true;
-      state.currentUser = null;
     },
 
     deleteUserSuccess:(state) => {
       state.error = null;
       state.loading = false;
-      state.currentUser = null;
     },
 
     deleteUserFailure:(state,action) => {
@@ -160,6 +156,9 @@ export const { signInStart,
                 updateSuccess,
                 updateFailure,
                 updateUserSuccess,
+                deleteAdminUserStart,
+                deleteAdminUserSuccess,
+                deleteAdminUserFailure,
                 deleteUserStart,
                 deleteUserSuccess,
                 deleteUserFailure,

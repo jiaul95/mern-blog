@@ -40,15 +40,9 @@ export const DashUsers = () => {
     await axiosInstance
       .delete(`/user/deleteUser/${userIdToDelete}`)
       .then((res) => {
-        if (res.data.success === true) {
-          const newData = Array.isArray(res.data.data)
-            ? res.data.data
-            : [res.data.data];
-
+        if (res.data.success === true) {        
           const updatedUsers = allUsers
-            .filter((user) => user._id !== userIdToDelete)
-            .concat(newData);
-
+            .filter((user) => user._id !== userIdToDelete);
           dispatch(deleteUserSuccess(res.data.message));
           dispatch(userFetchSuccess(updatedUsers));
         } else {

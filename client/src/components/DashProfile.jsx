@@ -12,9 +12,9 @@ import { imageUploadStart,
         updateSuccess,
         updateFailure,
         updateUserSuccess, 
-        deleteUserStart,
-        deleteUserSuccess,
-        deleteUserFailure ,
+        deleteAdminUserStart,
+        deleteAdminUserSuccess,
+        deleteAdminUserFailure ,
         signoutUserSuccess
     } from "../features/user/userSlice.js";
 import { CircularProgressbar } from 'react-circular-progressbar';
@@ -91,19 +91,19 @@ export const DashProfile = () =>{
 
         setShowModal(false);
 
-        dispatch(deleteUserStart());
+        dispatch(deleteAdminUserStart());
 
         await axiosInstance.delete(`/delete/${currentUser._id}`)
         .then((res) => {
             if(res.data.success === true){         
-                dispatch(deleteUserSuccess(res.data.message));
+                dispatch(deleteAdminUserSuccess(res.data.message));
             }else
             {
-                dispatch(deleteUserFailure("Failed to delete profile!"));
+                dispatch(deleteAdminUserFailure("Failed to delete profile!"));
             }
         })
         .catch((error) => {
-            dispatch(deleteUserFailure(error.response.data.message));
+            dispatch(deleteAdminUserFailure(error.response.data.message));
         }); 
     }
 
