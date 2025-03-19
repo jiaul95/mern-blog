@@ -8,29 +8,14 @@ import {Projects} from "./pages/Projects.jsx";
 import {Header} from "./components/Header.jsx";
 import {FooterComponent} from "./components/FooterComponent.jsx";
 import "./assets/css/theme.css";
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
 import { PrivateRoute } from "./components/PrivateRoute.jsx";
 import { OnlyAdminPrivateRoute } from "./components/OnlyAdminPrivateRoute.jsx";
 import { CreatePost } from "./pages/CreatePost.jsx";
 import { UpdatePost } from "./pages/UpdatePost.jsx";
+import { PostPage } from "./pages/PostPage.jsx";
 
 
 export default function App() {
-
-  // const { theme } = useSelector((state) => state.theme);
-
-  // // useEffect(() => {
-  // //   document.documentElement.classList.toggle("dark", theme === "dark");
-  // // }, [theme]);
-
-  // useEffect(() => {
-  //   if (theme === "dark") {
-  //     document.body.classList.add("dark-mode");
-  //   } else {
-  //     document.body.classList.remove("dark-mode");
-  //   }
-  // }, [theme]);
 
   return (
     <BrowserRouter>
@@ -48,6 +33,8 @@ export default function App() {
           <Route path="/update-post/:postId" element={<UpdatePost/>} />
         </Route>
         <Route path="/projects" element={<Projects />} />
+        <Route path="/post/:postSlug" element={<PostPage />} />
+
       </Routes>
       <FooterComponent />
     </BrowserRouter>
