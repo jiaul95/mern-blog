@@ -23,9 +23,6 @@ export const DashPosts = () => {
   const [postIdToDelete, setPostIdToDelete] = useState("");
   const allPosts = useSelector((state) => state.post?.allPosts) || [];
 
-  // useEffect(() => {
-  //     console.log("Updated Posts List:", allPosts.map((p) => p._id));
-  // }, [allPosts]);
 
   const handleShowModal = (postId) => {
     setShowModal(true);

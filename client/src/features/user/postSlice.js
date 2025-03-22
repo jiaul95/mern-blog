@@ -5,7 +5,8 @@ const initialState = {
   error: null,
   loading: false,
   successMessage:null, 
-  allPosts:[]
+  allPosts:[],
+  individualPost: null,
 }
 
 export const postSlice = createSlice({
@@ -70,19 +71,30 @@ export const postSlice = createSlice({
     updatePostStart: (state) => {
       state.error = null;
       state.loading = true;
-     },
-     updatePostSuccess: (state,action) => {
-       state.currentUser = action.payload;
-       state.loading = false;
-       state.error = null;
-     },
-     updatePostFailure: (state,action) => {
-       state.loading = false;
-       state.error = action.payload;
-     },     
-    
-
-
+    },
+    updatePostSuccess: (state,action) => {
+      state.currentUser = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    updatePostFailure: (state,action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },     
+        
+    individualPostFetchStart: (state) => {
+      state.error = null;
+      state.loading = true;
+    },
+    individualPostFetchSuccess: (state,action) => {
+      state.individualPost = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    individualPostFetchFailure: (state,action) => {
+      state.error = action.payload;
+      state.loading = false;
+    },
 
   },
 })
@@ -102,6 +114,9 @@ export const {
               updatePostStart,
               updatePostSuccess,
               updatePostFailure,
+              individualPostFetchStart,
+              individualPostFetchSuccess,
+              individualPostFetchFailure
               } = postSlice.actions
 
 export default postSlice.reducer
