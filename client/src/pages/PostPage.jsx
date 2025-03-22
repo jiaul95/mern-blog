@@ -9,6 +9,7 @@ import {
 } from "../features/user/postSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
+import { CallToAction } from "../components/CallToAction";
 
 export const PostPage = () => {
   const { loading } = useSelector((state) => state.post);
@@ -84,6 +85,11 @@ export const PostPage = () => {
           __html: individualPost && individualPost.content,
         }}
       ></div>
+
+      <div className="max-w-4xl mx-auto w-full">
+        <CallToAction />        
+      </div>
+
     </main>
   );
 };
