@@ -32,23 +32,24 @@ export const Header = () => {
       .post(`/signout`)
       .then((res) => {
         if (res.data.success === true) {
+          // const protectedRoutes = [
+          //   "/dashboard",
+          //   "/create-post",
+          //   "/update-post/:postId",
+          // ];
+
+          // const currentPath = location.pathname;
+
+          // // Check if the current path is protected
+          // const shouldRedirect = protectedRoutes.some((route) =>
+          //   currentPath.startsWith(route)
+          // );
           dispatch(signoutUserSuccess());
-          const protectedRoutes = [
-            "/dashboard",
-            "/create-post",
-            "/update-post/:postId",
-          ];
 
-          const currentPath = location.pathname;
-
-          // Check if the current path is protected
-          const shouldRedirect = protectedRoutes.some((route) =>
-            currentPath.startsWith(route)
-          );
-
-          if (shouldRedirect) {
-            navigate("/sign-in");
-          }
+          // console.log("shouldRedirect",shouldRedirect);
+          // if (shouldRedirect) {
+          //   navigate("/sign-in");
+          // }
         }
       })
       .catch((error) => {

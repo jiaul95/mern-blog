@@ -38,18 +38,18 @@ export const DashSidebar = () =>{
         if(res.data.success === true){         
             dispatch(signoutUserSuccess());
 
-            const protectedRoutes = ["/dashboard", "/create-post", "/update-post/:postId"];
+            // const protectedRoutes = ["/dashboard", "/create-post", "/update-post/:postId"];
             
-            const currentPath = location.pathname;
+            // const currentPath = location.pathname;
 
-            // Check if the current path is protected
-            const shouldRedirect = protectedRoutes.some((route) =>
-              currentPath.startsWith(route)
-            );
+            // // Check if the current path is protected
+            // const shouldRedirect = protectedRoutes.some((route) =>
+            //   currentPath.startsWith(route)
+            // );
             
-            if (shouldRedirect) {
-              navigate("/sign-in");
-            }
+            // if (shouldRedirect) {
+            //   navigate("/sign-in");
+            // }
 
         }
     })

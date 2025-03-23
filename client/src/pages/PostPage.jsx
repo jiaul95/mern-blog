@@ -13,15 +13,17 @@ import { CallToAction } from "../components/CallToAction";
 import { CommentSection } from "../components/CommentSection";
 
 export const PostPage = () => {
-  const { loading } = useSelector((state) => state.post);
-  const individualPost =
-    useSelector((state) => state.post?.individualPost) || {};
+
   const { postSlug } = useParams();
   const dispatch = useDispatch();
 
+  const { loading } = useSelector((state) => state.post);
+  const individualPost = useSelector((state) => state.post?.individualPost) || {};
+  
+  // console.log("postSlug",postSlug);
   useEffect(() => {
     dispatch(individualPostFetchStart());
-
+    // console.log("inside useeffect");
     axiosInstance
       .get(`/post/getPosts?slug=${postSlug}`)
       .then((res) => {
@@ -36,13 +38,14 @@ export const PostPage = () => {
         dispatch(individualPostFetchFailure(error.response.data.message));
       });
   }, [postSlug]);
-
-  if (loading)
+  
+  if (loading){
     return (
       <div className="flex justify-center items-centermin-h-screen">
         <Spinner size="xl" />
       </div>
     );
+  }
 
   return (
     <main className="p-3 flex flex-col max-w-6xl mx-auto min-h-screen">
@@ -74,8 +77,14 @@ export const PostPage = () => {
           {individualPost &&
             new Date(individualPost.createdAt).toLocaleDateString()}
         </span>
-        <span className="italic">
+        {/* <span className="italic">
           {individualPost && (individualPost.content.length / 1000).toFixed(0)}{" "}
+          mins read
+        </span> */}
+        <span className="italic">
+          {individualPost?.content
+            ? (individualPost.content.length / 1000).toFixed(0)
+            : "0"}{" "}
           mins read
         </span>
       </div>
@@ -95,4 +104,5 @@ export const PostPage = () => {
 
     </main>
   );
-};
+  
+}
