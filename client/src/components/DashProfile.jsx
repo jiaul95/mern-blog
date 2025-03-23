@@ -20,7 +20,7 @@ import { imageUploadStart,
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 
 export const DashProfile = () =>{
@@ -28,7 +28,9 @@ export const DashProfile = () =>{
   const [imageFile,setImageFile] = useState(null);
   const [imageFileUrl,setImageFileUrl] = useState(null);
   const filePickerRef = useRef(null);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch();  
+  const navigate = useNavigate();
+  const location = useLocation();
   const {
         currentUser,
         updateUserSuccess:updateSuccessMessage,
@@ -113,6 +115,18 @@ export const DashProfile = () =>{
         .then((res) => {
             if(res.data.success === true){         
                 dispatch(signoutUserSuccess());
+                const protectedRoutes = ["/dashboard", "/create-post", "/update-post/:postId"];
+            
+                const currentPath = location.pathname;
+    
+                // Check if the current path is protected
+                const shouldRedirect = protectedRoutes.some((route) =>
+                  currentPath.startsWith(route)
+                );
+    
+                if (shouldRedirect) {
+                  navigate("/sign-in");
+                }
             }
         })
         .catch((error) => {

@@ -17,7 +17,7 @@ export const Dashboard = () => {
     if(tabFromUrl){
       setTab(tabFromUrl); 
     }
-    console.log("tab from url: " + tabFromUrl);
+    // console.log("tab from url: " + tabFromUrl);
   },[location.search]);
 
   return (

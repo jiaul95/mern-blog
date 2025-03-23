@@ -10,6 +10,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { CallToAction } from "../components/CallToAction";
+import { CommentSection } from "../components/CommentSection";
 
 export const PostPage = () => {
   const { loading } = useSelector((state) => state.post);
@@ -89,6 +90,8 @@ export const PostPage = () => {
       <div className="max-w-4xl mx-auto w-full">
         <CallToAction />        
       </div>
+
+      <CommentSection postId={individualPost._id} />
 
     </main>
   );
