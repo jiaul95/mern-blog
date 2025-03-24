@@ -96,6 +96,20 @@ export const postSlice = createSlice({
       state.loading = false;
     },
 
+    createCommentStart: (state) => {
+      state.error = null;
+      state.loading = true;
+    },
+    createCommentSuccess: (state,action) => {
+      state.individualPost = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    createCommentFailure: (state,action) => {
+      state.error = action.payload;
+      state.loading = false;
+    },
+
   },
 })
 
@@ -116,7 +130,10 @@ export const {
               updatePostFailure,
               individualPostFetchStart,
               individualPostFetchSuccess,
-              individualPostFetchFailure
+              individualPostFetchFailure,
+              createCommentStart,
+              createCommentSuccess,
+              createCommentFailure
               } = postSlice.actions
 
 export default postSlice.reducer

@@ -20,10 +20,8 @@ export const PostPage = () => {
   const { loading } = useSelector((state) => state.post);
   const individualPost = useSelector((state) => state.post?.individualPost) || {};
   
-  // console.log("postSlug",postSlug);
   useEffect(() => {
     dispatch(individualPostFetchStart());
-    // console.log("inside useeffect");
     axiosInstance
       .get(`/post/getPosts?slug=${postSlug}`)
       .then((res) => {
@@ -77,10 +75,7 @@ export const PostPage = () => {
           {individualPost &&
             new Date(individualPost.createdAt).toLocaleDateString()}
         </span>
-        {/* <span className="italic">
-          {individualPost && (individualPost.content.length / 1000).toFixed(0)}{" "}
-          mins read
-        </span> */}
+        
         <span className="italic">
           {individualPost?.content
             ? (individualPost.content.length / 1000).toFixed(0)
