@@ -1,13 +1,6 @@
-import User from "../models/user.model.js";
-import Post from "../models/post.model.js";
-import Comment from "../models/comment.model.js";
-import bcrypt from "bcryptjs";
-import errorHandler from "../utils/customError.js";
-import jwt from "jsonwebtoken";
-import multer from "multer";
-import path from "path";
-import fs from "fs";
 
+import Comment from "../models/comment.model.js";
+import errorHandler from "../utils/customError.js";
 
 
 export const createComment = async (req, res, next) => {
@@ -38,5 +31,28 @@ export const createComment = async (req, res, next) => {
     }
   
 };
+
+
+export const getPostComments = async (req, res, next) => {
+  
+   try {
+
+      const comments = await Comment.find({postId: req.params.postId})
+        .sort({ createdAt: -1 });   
+        
+        res.status(200).json({
+          success: true,
+          statusCode: 200,
+          message: "Comments fetched successfully",
+          data: {
+            comments,
+          },
+        });
+    } catch (error) {
+      next(error);
+    }
+
+};
+
 
 

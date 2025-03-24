@@ -53,6 +53,37 @@ export const getUsers = async (req, res, next) => {
 };
 
 
+
+export const getUser = async (req, res, next) => {
+  try {
+
+    if (!req.user.isAdmin) {
+      return next(errorHandler(403, "You are not allowed to see users"));
+    }
+
+    const user = await User.findById(req.params.userId);
+
+    if(!user){
+      return next(errorHandler(404, "User not found"));
+    }
+    
+    const {password,...rest} = user._doc;
+    
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: "User fetched successfully",
+      data: {
+        user:rest
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
 export const deleteUser = async (req, res, next) => {
   if (!req.user.isAdmin) {
     return next(errorHandler(403, "You are not allowed to delete this user"));

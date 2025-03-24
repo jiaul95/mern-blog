@@ -110,6 +110,17 @@ export const postSlice = createSlice({
       state.loading = false;
     },
 
+    // commentsFetchSuccess: (state,action) => {
+    //   state.allPosts = action.payload;
+    //   state.loading = false;
+    //   state.error = null;
+    // },
+    // commentsFetchFailure: (state,action) => {
+    //   state.loading = false;
+    //   state.error = action.payload;
+    // },
+
+
   },
 })
 

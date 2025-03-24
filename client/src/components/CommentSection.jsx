@@ -1,17 +1,20 @@
 import { Alert, Button, Textarea} from "flowbite-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import axiosInstance from "../../axios/axios.js";
 import { createCommentStart,createCommentSuccess,createCommentFailure,successAlert,dismissImageAlert
     } from "../features/user/postSlice.js";
 import 'react-circular-progressbar/dist/styles.css';
 import { Link } from "react-router-dom";
+import { Comment } from "./Comment.jsx";
 
 
 export const CommentSection = ({postId}) =>{
 
     const {currentUser} = useSelector(state=>state.user);
     const [comment,setComment] = useState(''); 
+    const [comments,setComments] = useState(''); 
+
     const dispatch = useDispatch();
     const {        
         error: errorMessage
@@ -40,14 +43,17 @@ export const CommentSection = ({postId}) =>{
                 },
               })
               .then((res) => {
-                console.log("res", res.data);
+                // console.log("res", res.data);
                 if (res.data.success === true) {
-                  dispatch(createCommentSuccess(res.data.data));
-                  dispatch(successAlert(res.data.message));
+                //   dispatch(createCommentSuccess(res.data.data));
+                //   dispatch(successAlert(res.data.message));
+                  setComments([res.data.data.comment, ...comments]);
                   setComment("");
-                } else {
-                  dispatch(createCommentFailure("Failed to update profile!"));
+
                 }
+                // else {
+                //   dispatch(createCommentFailure("Failed to update profile!"));
+                // }
               })
               .catch((error) => {
                 console.error("Error Response", error);
@@ -55,6 +61,32 @@ export const CommentSection = ({postId}) =>{
               });
 
     };
+
+    useEffect(() => {
+        const getAllUsers = () => {
+             axiosInstance
+               .get(`/comment/getPostComments/${postId}`)
+               .then((res) => {
+                 if (res.data.success === true) {
+                    setComments(res.data.data.comments);
+                
+                //    dispatch(userFetchSuccess(res.data.data.users || []));
+                //    if (res.data.data.users?.length < 9) {
+                //      setShowMore(false);
+                //    }
+                //  } else {
+                //    dispatch(userFetchFailure("Failed to fetch users!"));
+                 }
+               })
+               .catch((error) => {
+                 console.error("Error Response", error);
+                //  dispatch(userFetchFailure(error.response.data.message));
+               });
+           };
+
+        getAllUsers();
+       
+    },[postId]);
 
     return (
         <div className="max-w-2xl max-auto w-full p-3">
@@ -104,6 +136,26 @@ export const CommentSection = ({postId}) =>{
                     )}                    
                 </form>
             )}
+            {comments.length === 0 ? (
+                <p className="text-sm my-5 text-gray-500 mt-5">No comments yet!</p>
+            )
+            :(
+                <>
+                    <div className="text-sm my-5 flex items-center gap-1">
+                        <p>Comments</p>
+                        <div className="border border-gray-400 py-1 px-2 rounded-sm">
+                            <p>{comments.length}</p>
+                        </div>
+                    </div>
+
+                    {comments.map((comment)=>(
+                        <Comment key={comment._id} 
+                        comment={comment}
+                        />
+                    ))}
+                </>
+            )}
+
 
         </div>
 
