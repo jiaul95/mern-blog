@@ -98,7 +98,6 @@ export const postSlice = createSlice({
 
     createCommentStart: (state) => {
       state.error = null;
-      state.loading = true;
     },
     createCommentSuccess: (state,action) => {
       state.individualPost = action.payload;

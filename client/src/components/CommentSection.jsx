@@ -2,7 +2,7 @@ import { Alert, Button, Textarea} from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import axiosInstance from "../../axios/axios.js";
-import { createCommentStart,createCommentSuccess,createCommentFailure,successAlert,dismissImageAlert
+import { dismissImageAlert
     } from "../features/user/postSlice.js";
 import 'react-circular-progressbar/dist/styles.css';
 import { Link } from "react-router-dom";
@@ -12,79 +12,65 @@ import { Comment } from "./Comment.jsx";
 export const CommentSection = ({postId}) =>{
 
     const {currentUser} = useSelector(state=>state.user);
-    const [comment,setComment] = useState(''); 
-    const [comments,setComments] = useState(''); 
+    const [commentInput,setCommentInput] = useState(''); 
+    const [comments,setComments] = useState([]); 
+    const [error,setError] = useState(''); 
 
-    const dispatch = useDispatch();
-    const {        
-        error: errorMessage
-      } = useSelector((state) => state.post);
-    
+    const dispatch = useDispatch();    
 
     const handleSubmit = (e) =>{
         e.preventDefault();
 
-        if(comment.length > 200){
+        if(commentInput.length > 200){
             return;
         }
 
         const formData = {
-            comment: comment,
+            comment: commentInput,
             postId: postId,
             userId: currentUser._id,
-        }
+        }  
 
-        dispatch(createCommentStart());        
-
-         axiosInstance
-              .post(`/comment/create`, formData, {
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              })
-              .then((res) => {
-                // console.log("res", res.data);
-                if (res.data.success === true) {
-                //   dispatch(createCommentSuccess(res.data.data));
-                //   dispatch(successAlert(res.data.message));
-                  setComments([res.data.data.comment, ...comments]);
-                  setComment("");
-
-                }
-                // else {
-                //   dispatch(createCommentFailure("Failed to update profile!"));
-                // }
-              })
-              .catch((error) => {
-                console.error("Error Response", error);
-                dispatch(createCommentFailure(error.response.data.message));
-              });
+        axiosInstance
+        .post(`/comment/create`, formData, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then((res) => {
+            if (res.data.success === true) {
+                setComments([res.data.data, ...comments]);
+                setCommentInput("");
+            }
+            else {
+                setError("Failed to update profile!");
+            }
+        })
+        .catch((error) => {
+            console.error("Error Response", error);
+            setError(error.response.data.message);
+        });
 
     };
 
     useEffect(() => {
-        const getAllUsers = () => {
+        const getPostComments = () => {
              axiosInstance
                .get(`/comment/getPostComments/${postId}`)
                .then((res) => {
-                 if (res.data.success === true) {
-                    setComments(res.data.data.comments);
-                
-                //    dispatch(userFetchSuccess(res.data.data.users || []));
-                //    if (res.data.data.users?.length < 9) {
-                //      setShowMore(false);
-                //    }
-                //  } else {
-                //    dispatch(userFetchFailure("Failed to fetch users!"));
-                 }
+                if (res.data.success === true) {
+                    setComments(res.data.data);                
+                } else {
+                    setError("Failed to fetch users!");
+                }
                })
                .catch((error) => {
-                 console.error("Error Response", error);
-                //  dispatch(userFetchFailure(error.response.data.message));
+                    console.error("Error Response", error);
+                    setError(error.response.data.message);
                });
            };
 
-        getAllUsers();
+        getPostComments();
        
     },[postId]);
 
@@ -115,23 +101,23 @@ export const CommentSection = ({postId}) =>{
                         placeholder="Add a comment..."
                         rows='3'
                         maxLength='200'
-                        onChange={(e)=>setComment(e.target.value)}
-                        value={comment}
+                        onChange={(e)=>setCommentInput(e.target.value)}
+                        value={commentInput}
                     /> 
                     <div className="flex justify-between items-center mt-5">
-                        <p className="text-gray-500 text-xs">{200 - comment.length} characters remaining</p>
+                        <p className="text-gray-500 text-xs">{200 - commentInput.length} characters remaining</p>
                         <Button outline gradientDuoTone="purpleToBlue" type="submit">
                             Submit
                         </Button>
                     </div>
 
-                    {errorMessage && (
+                    {error && (
                         <Alert
                         className="mt-5"
                         color="failure"
                         onDismiss={() => dispatch(dismissImageAlert())}
                         >
-                        {errorMessage}
+                        {error}
                         </Alert>
                     )}                    
                 </form>
@@ -148,11 +134,12 @@ export const CommentSection = ({postId}) =>{
                         </div>
                     </div>
 
-                    {comments.map((comment)=>(
-                        <Comment key={comment._id} 
-                        comment={comment}
-                        />
-                    ))}
+                    {comments.map((comment) => {
+                        const key = comment._id || comment.createdAt;
+                        return key ? (
+                        <Comment key={key} comment={comment} />
+                        ) : null; // skip rendering if no valid key
+                    })}
                 </>
             )}
 

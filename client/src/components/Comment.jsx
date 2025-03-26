@@ -3,28 +3,30 @@ import axiosInstance from "../../axios/axios";
 import moment from "moment";
 
 export const Comment = ({ comment }) => {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const getUser = () => {
-      axiosInstance
-        .get(`/user/${comment.userId}`)
-        .then((res) => {
-          if (res.data.success === true) {
-            setUser(res.data.data.user);
-          }
-        })
-        .catch((error) => {
-          console.error("Error Response", error);
-        });
+    const getUser = async () => {
+      if (!comment?.userId) return;
+
+      try {
+        const res = await axiosInstance.get(`/user/${comment.userId}`);
+        if (res.data.success) {
+          setUser(res.data.data.user);
+        }
+      } catch (error) {
+        console.error("Error fetching user", error);
+      }
     };
 
     getUser();
-  }, [comment]);
+  }, [comment.userId]);
+
+  if (!user || !comment?.comment) return null;
 
   return (
-    <div>
-      <div className="">
+    <div className="flex p-4 border-b dark:border-gray-600 text-sm">
+      <div className="flex-shrink-0 mr-3">
         <img
           src={user.profilePicture}
           alt={user.username}
@@ -32,11 +34,14 @@ export const Comment = ({ comment }) => {
         />
       </div>
 
-      <div className="">
-        <div className="font-bold mr-1 text-xs truncate gap-1">
-          <span>{user ? `@${user.username}` : "anonymous user"}</span>
-          <span>{moment(comment.createdAt).fromNow()}</span>
+      <div className="flex-1">
+        <div className="flex items-center mb-1">
+          <span className="font-bold mr-1 text-xs truncate">
+            {user ? `@${user.username}`: "Anonymous user"}
+          </span>
+          <span className="text-gray-500 text-xs">{moment(comment.createdAt).fromNow()}</span>
         </div>
+        <div className="text-gray-500 pb-2">{comment.comment}</div>
       </div>
     </div>
   );

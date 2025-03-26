@@ -44,9 +44,7 @@ export const getPostComments = async (req, res, next) => {
           success: true,
           statusCode: 200,
           message: "Comments fetched successfully",
-          data: {
-            comments,
-          },
+          data: comments,
         });
     } catch (error) {
       next(error);
