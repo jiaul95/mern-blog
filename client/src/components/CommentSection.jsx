@@ -5,7 +5,7 @@ import axiosInstance from "../../axios/axios.js";
 import { dismissImageAlert
     } from "../features/user/postSlice.js";
 import 'react-circular-progressbar/dist/styles.css';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Comment } from "./Comment.jsx";
 
 
@@ -15,6 +15,7 @@ export const CommentSection = ({postId}) =>{
     const [commentInput,setCommentInput] = useState(''); 
     const [comments,setComments] = useState([]); 
     const [error,setError] = useState(''); 
+    const navigate = useNavigate();
 
     const dispatch = useDispatch();    
 
@@ -73,6 +74,35 @@ export const CommentSection = ({postId}) =>{
         getPostComments();
        
     },[postId]);
+
+    const handleLike = (commentId) => {
+
+        if(!currentUser){
+            navigate("/sign-in");
+            return;
+        }
+        console.log("commentId",commentId);
+        // Logic to handle like
+        axiosInstance
+           .put(`/comment/likeComment/${commentId}`)
+           .then((res) => {
+                if (res.data.success === true) {
+                    console.log("res.data.data",res.data.data);
+                    setComments(comments.map((comment) => 
+                       comment._id === commentId ? {
+                            ...comment,likes: res.data.data.likes,
+                            numberOfLikes: res.data.data.likes.length
+                            } : comment
+                        ))
+                } else {
+                    setError("Failed to update like!");
+                }
+            })
+           .catch((error) => {
+                console.error("Error Response", error);
+                setError(error.response.data.message);
+            });
+    }
 
     return (
         <div className="max-w-2xl max-auto w-full p-3">
@@ -137,15 +167,13 @@ export const CommentSection = ({postId}) =>{
                     {comments.map((comment) => {
                         const key = comment._id || comment.createdAt;
                         return key ? (
-                        <Comment key={key} comment={comment} />
+                        <Comment key={key} comment={comment} onLike={handleLike} />
                         ) : null; // skip rendering if no valid key
                     })}
                 </>
             )}
 
 
-        </div>
-
-       
+        </div>       
     );
 }
