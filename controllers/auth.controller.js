@@ -82,8 +82,7 @@ export const signin = async (req, res, next) => {
     })
     .cookie("refresh_token", refreshToken, {
       httpOnly: true,
-      // maxAge: 7 * 24 * 60 * 60 * 1000,
-      maxAge: 2 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
       secure: process.env.NODE_ENV === "production", // True in production
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
       path: "/",
@@ -370,47 +369,6 @@ export const signout = async (req, res, next) => {
   }
 };
 
-// export const refreshToken = async (req, res, next) => {
-//   const token = req.cookies.refresh_token;
-//   if (!token) {
-//     return next(errorHandler(401, "Unauthenticated"));
-//     // return res.sendStatus(401);
-//   }
-
-
-//   try {
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//     const user = await User.findById(decoded.id);
-
-//     if (!user || user.refreshToken !== token){
-//       return next(errorHandler(403, "Forbidden"));
-//       // return res.sendStatus(403);
-//     }
-//     const accessToken = generateAccessToken(user);
-//     res
-//     .status(200)
-//     .cookie("access_token", accessToken, {
-//       httpOnly: true,
-//       maxAge: 1 * 60 * 1000,
-//       secure: process.env.NODE_ENV === "production", // True in production
-//       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-//       path: "/",
-//     })    
-//     .json({
-//       success: true,
-//       statusCode: 200,
-//       message: "Token Refreshed"
-//     });
-
-//   } catch (error) {
-//     console.log("refresh token error",error);
-//     // res.clearCookie("access_token", { path: "/" });
-//     // res.clearCookie("refresh_token", { path: "/" });
-//     next(error);
-//   }
-  
-// };
-
 
 export const refreshToken = async (req, res, next) => {
   const refreshToken = req.cookies.refresh_token;
@@ -435,7 +393,7 @@ export const refreshToken = async (req, res, next) => {
 
     res.cookie("access_token", newAccessToken, {
       httpOnly: true,
-      maxAge: 1 * 60 * 1000, // 1 minute for testing
+      maxAge: 15 * 60 * 1000, // 1 minute for testing
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
       path: "/",
