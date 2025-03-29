@@ -1,0 +1,27 @@
+1. List of TTs where the alarm was cleared, and the difference between `tkt_resolved_date` and `event_end_date` was correctly 30 minutes  
+- Ticket ID: 16686016 | User: AutoTTSysAdm  
+- Ticket ID: 16685431 | User: AutoTTSysAdm  
+- Ticket ID: 16684661 | User: AutoTTSysAdm  
+
+2. List of TTs where the alarm was cleared, but there was a significant time difference (greater than 30 minutes)  
+- Ticket ID: 16684970 | User: AutoTTSysAdm  
+- Ticket ID: 16681902 | User: AutoTTSysAdm  
+
+3. List of TTs where the difference between `tkt_resolved_date` and `event_end_date` was 19 hours  
+- Ticket ID: 16687771 | User: Srikanta Panigrahi  
+- Ticket ID: 16687587 | User: Srikanta Panigrahi  
+- Ticket ID: 16686750 | User: TCT86008852  
+- Ticket ID: 16684382 | User: Srikanta Panigrahi  
+- Ticket ID: 16683868 | User: TCT86008852  
+- Ticket ID: 16680715 | User: Vishwanath Khade  
+- Ticket ID: 16680614 | User: Vishwanath Khade  
+
+Hi Aditya,
+
+We have checked from our end and found that the TTs listed under point 2, where the alarm was cleared, had a time difference of more than 30 minutes.
+
+Additionally, the TTs under point 3 were manually resolved by user in wfm portal. And the reason for the time difference is when we select event end date , the event end date we can select back date time from 
+current time but greater than event_start_date which feature is enable currently in out wfm ticketing portal. For this reason the time difference of more than 30 minutes while resolving TT manually.
+
+So to restrict the back date time selecttion, we will discuss with sajid sir for the changes. we will let you know after the changes have done.
+
