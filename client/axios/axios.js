@@ -12,12 +12,12 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    console.log("✅ Success Response:", {
-      url: response.config.url,
-      method: response.config.method,
-      status: response.status,
-      data: response.data,
-    });
+    // console.log("✅ Success Response:", {
+    //   url: response.config.url,
+    //   method: response.config.method,
+    //   status: response.status,
+    //   data: response.data,
+    // });
 
     return response;
   },
@@ -29,14 +29,10 @@ axiosInstance.interceptors.response.use(
     // Prevent infinite loop if refreshToken itself fails
     if ([401, 403,500].includes(status) && !originalRequest._retry && !isRefreshRequest) {
       originalRequest._retry = true;
-
       try {
-        const refreshResponse = await axiosInstance.post("/refreshToken");
-        console.log("🔁 Token refreshed:", refreshResponse.data);
-        return axiosInstance(originalRequest); // Retry the original request
+        await axiosInstance.post("/refreshToken");
+        return axiosInstance(originalRequest); 
       } catch (refreshError) {
-        console.log("❌ Refresh failed:", refreshError);
-        // Clear Redux and redirect
         store.dispatch(signoutUserSuccess());
         window.location.href = "/sign-in";
         return Promise.reject(refreshError);

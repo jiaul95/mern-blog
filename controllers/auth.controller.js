@@ -75,7 +75,7 @@ export const signin = async (req, res, next) => {
     .status(200)
     .cookie("access_token", token, {
       httpOnly: true,
-      maxAge: 1 * 60 * 1000,
+      maxAge: 15 * 60 * 1000,
       secure: process.env.NODE_ENV === "production", // True in production
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
       path: "/",
@@ -101,14 +101,9 @@ export const googleAuth = async (req, res, next) => {
   const findUser = await User.findOne({ email });
 
   if (findUser) {
-    // const token = jwt.sign(
-    //   { id: findUser._id, isAdmin: findUser.isAdmin },
-    //   process.env.JWT_SECRET
-    // );
-
+    
     const token = generateAccessToken(findUser);
-    const refresh_token = generateRefreshToken(findUser);
-
+    const refreshToken = generateRefreshToken(findUser);
 
     const { password, ...rest } = findUser._doc;
 
@@ -150,11 +145,7 @@ export const googleAuth = async (req, res, next) => {
     });
 
     if (newUser) {
-      // const token = jwt.sign(
-      //   { id: newUser._id, isAdmin: newUser.isAdmin },
-      //   process.env.JWT_SECRET
-      // );
-
+     
       const token = generateAccessToken(newUser);
 
       const refreshToken = generateRefreshToken(newUser);
@@ -164,15 +155,15 @@ export const googleAuth = async (req, res, next) => {
         .status(200)
         .cookie("access_token", token, {
           httpOnly: true,
-          maxAge: 1 * 60 * 1000,
+          maxAge: 15 * 60 * 1000,
           secure: process.env.NODE_ENV === "production", // True in production
           sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
           path: "/",
         })
         .cookie("refresh_token", refreshToken, {
           httpOnly: true,
-          // maxAge: 7 * 24 * 60 * 60 * 1000,
-          maxAge: 2 * 60 * 1000,
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+          // maxAge: 2 * 60 * 1000,
           secure: process.env.NODE_ENV === "production", // True in production
           sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
           path: "/",

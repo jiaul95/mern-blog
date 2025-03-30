@@ -1,179 +1,196 @@
-import { Alert, Button, Textarea} from "flowbite-react";
+import { Alert, Button, Textarea } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "../../axios/axios.js";
-import { dismissImageAlert
-    } from "../features/user/postSlice.js";
-import 'react-circular-progressbar/dist/styles.css';
+import { dismissImageAlert } from "../features/user/postSlice.js";
+import "react-circular-progressbar/dist/styles.css";
 import { Link, useNavigate } from "react-router-dom";
 import { Comment } from "./Comment.jsx";
 
+export const CommentSection = ({ postId }) => {
+  const { currentUser } = useSelector((state) => state.user);
+  const [commentInput, setCommentInput] = useState("");
+  const [comments, setComments] = useState([]);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-export const CommentSection = ({postId}) =>{
+  const dispatch = useDispatch();
 
-    const {currentUser} = useSelector(state=>state.user);
-    const [commentInput,setCommentInput] = useState(''); 
-    const [comments,setComments] = useState([]); 
-    const [error,setError] = useState(''); 
-    const navigate = useNavigate();
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-    const dispatch = useDispatch();    
-
-    const handleSubmit = (e) =>{
-        e.preventDefault();
-
-        if(commentInput.length > 200){
-            return;
-        }
-
-        const formData = {
-            comment: commentInput,
-            postId: postId,
-            userId: currentUser._id,
-        }  
-
-        axiosInstance
-        .post(`/comment/create`, formData, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-        .then((res) => {
-            if (res.data.success === true) {
-                setComments([res.data.data, ...comments]);
-                setCommentInput("");
-            }
-            else {
-                setError("Failed to update profile!");
-            }
-        })
-        .catch((error) => {
-            console.error("Error Response", error);
-            setError(error.response.data.message);
-        });
-
-    };
-
-    useEffect(() => {
-        const getPostComments = () => {
-             axiosInstance
-               .get(`/comment/getPostComments/${postId}`)
-               .then((res) => {
-                if (res.data.success === true) {
-                    setComments(res.data.data);                
-                } else {
-                    setError("Failed to fetch users!");
-                }
-               })
-               .catch((error) => {
-                    console.error("Error Response", error);
-                    setError(error.response.data.message);
-               });
-           };
-
-        getPostComments();
-       
-    },[postId]);
-
-    const handleLike = (commentId) => {
-
-        if(!currentUser){
-            navigate("/sign-in");
-            return;
-        }
-        console.log("commentId",commentId);
-        // Logic to handle like
-        axiosInstance
-           .put(`/comment/likeComment/${commentId}`)
-           .then((res) => {
-                if (res.data.success === true) {
-                    console.log("res.data.data",res.data.data);
-                    setComments(comments.map((comment) => 
-                       comment._id === commentId ? {
-                            ...comment,likes: res.data.data.likes,
-                            numberOfLikes: res.data.data.likes.length
-                            } : comment
-                        ))
-                } else {
-                    setError("Failed to update like!");
-                }
-            })
-           .catch((error) => {
-                console.error("Error Response", error);
-                setError(error.response.data.message);
-            });
+    if (commentInput.length > 200) {
+      return;
     }
 
-    return (
-        <div className="max-w-2xl max-auto w-full p-3">
-            {
-            currentUser ? 
-            (
-                <div className="flex items-center gap-1 my-5 text-gray-500 text-sm">
-                    <p>Signed in as:</p>
-                    <img className="h-5 w-5 object-cover rounded-full" src={currentUser.profilePicture} alt="" />
-                    <Link to={'/dashboard?tab=profile'} className="text-xs text-cyan-600 hover:underline">
-                        @{currentUser.username}
-                    </Link>
-                </div>
+    const formData = {
+      comment: commentInput,
+      postId: postId,
+      userId: currentUser._id,
+    };
+
+    axiosInstance
+      .post(`/comment/create`, formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        if (res.data.success === true) {
+          setComments([res.data.data, ...comments]);
+          setCommentInput("");
+        } else {
+          setError("Failed to update profile!");
+        }
+      })
+      .catch((error) => {
+        console.error("Error Response", error);
+        setError(error.response.data.message);
+      });
+  };
+
+  useEffect(() => {
+    const getPostComments = () => {
+      axiosInstance
+        .get(`/comment/getPostComments/${postId}`)
+        .then((res) => {
+          if (res.data.success === true) {
+            setComments(res.data.data);
+          } else {
+            setError("Failed to fetch users!");
+          }
+        })
+        .catch((error) => {
+          console.error("Error Response", error);
+          setError(error.response.data.message);
+        });
+    };
+
+    getPostComments();
+  }, [postId]);
+
+  const handleLike = (commentId) => {
+    if (!currentUser) {
+      navigate("/sign-in");
+      return;
+    }
+    console.log("commentId", commentId);
+    // Logic to handle like
+    axiosInstance
+      .put(`/comment/likeComment/${commentId}`)
+      .then((res) => {
+        if (res.data.success === true) {
+          console.log("res.data.data", res.data.data);
+          setComments(
+            comments.map((comment) =>
+              comment._id === commentId
+                ? {
+                    ...comment,
+                    likes: res.data.data.likes,
+                    numberOfLikes: res.data.data.likes.length,
+                  }
+                : comment
             )
-            :
-            (
-                <div className="text-sm text-teal-500 my-5 flex gap-1">
-                    You must be signed in to comment.
-                    <Link className="text-blue-500 hover:underline" to={'/sign-in'}>Sign In</Link>
-                </div>
-            )}
-            
-            {currentUser && (
-                <form className="border border-teal-500 rounded-md p-3" onSubmit={handleSubmit}>
-                    <Textarea 
-                        placeholder="Add a comment..."
-                        rows='3'
-                        maxLength='200'
-                        onChange={(e)=>setCommentInput(e.target.value)}
-                        value={commentInput}
-                    /> 
-                    <div className="flex justify-between items-center mt-5">
-                        <p className="text-gray-500 text-xs">{200 - commentInput.length} characters remaining</p>
-                        <Button outline gradientDuoTone="purpleToBlue" type="submit">
-                            Submit
-                        </Button>
-                    </div>
+          );
+        } else {
+          setError("Failed to update like!");
+        }
+      })
+      .catch((error) => {
+        console.error("Error Response", error);
+        setError(error.response.data.message);
+      });
+  };
 
-                    {error && (
-                        <Alert
-                        className="mt-5"
-                        color="failure"
-                        onDismiss={() => dispatch(dismissImageAlert())}
-                        >
-                        {error}
-                        </Alert>
-                    )}                    
-                </form>
-            )}
-            {comments.length === 0 ? (
-                <p className="text-sm my-5 text-gray-500 mt-5">No comments yet!</p>
-            )
-            :(
-                <>
-                    <div className="text-sm my-5 flex items-center gap-1">
-                        <p>Comments</p>
-                        <div className="border border-gray-400 py-1 px-2 rounded-sm">
-                            <p>{comments.length}</p>
-                        </div>
-                    </div>
+  const handleCommentEdit = (comment, editedComment) => {
+    setComments( comments.map((c) =>
+        c._id === comment._id ? { ...c, comment: editedComment } : c
+      ));
+  };
 
-                    {comments.map((comment) => {
-                        const key = comment._id || comment.createdAt;
-                        return key ? (
-                        <Comment key={key} comment={comment} onLike={handleLike} />
-                        ) : null; // skip rendering if no valid key
-                    })}
-                </>
-            )}
+  return (
+    <div className="max-w-2xl max-auto w-full p-3">
+      {currentUser ? (
+        <div className="flex items-center gap-1 my-5 text-gray-500 text-sm">
+          <p>Signed in as:</p>
+          <img
+            className="h-5 w-5 object-cover rounded-full"
+            src={currentUser.profilePicture}
+            alt=""
+          />
+          <Link
+            to={"/dashboard?tab=profile"}
+            className="text-xs text-cyan-600 hover:underline"
+          >
+            @{currentUser.username}
+          </Link>
+        </div>
+      ) : (
+        <div className="text-sm text-teal-500 my-5 flex gap-1">
+          You must be signed in to comment.
+          <Link className="text-blue-500 hover:underline" to={"/sign-in"}>
+            Sign In
+          </Link>
+        </div>
+      )}
 
+      {currentUser && (
+        <form
+          className="border border-teal-500 rounded-md p-3"
+          onSubmit={handleSubmit}
+        >
+          <Textarea
+            className="w-full rounded-md p-2 focus:outline-none"
+            placeholder="Add a comment..."
+            rows="3"
+            maxLength="200"
+            onChange={(e) => setCommentInput(e.target.value)}
+            value={commentInput}
+          />
+          <div className="flex justify-between items-center mt-5">
+            <p className="text-gray-500 text-xs">
+              {200 - commentInput.length} characters remaining
+            </p>
+            <Button className="cursor-pointer hover:text-gray-600" outline gradientDuoTone="purpleToBlue" type="submit">
+              Submit
+            </Button>
+          </div>
 
-        </div>       
-    );
-}
+          {error && (
+            <Alert
+              className="mt-5"
+              color="failure"
+              onDismiss={() => dispatch(dismissImageAlert())}
+            >
+              {error}
+            </Alert>
+          )}
+        </form>
+      )}
+      {comments.length === 0 ? (
+        <p className="text-sm my-5 text-gray-500 mt-5">No comments yet!</p>
+      ) : (
+        <>
+          <div className="text-sm my-5 flex items-center gap-1">
+            <p>Comments</p>
+            <div className="border border-gray-400 py-1 px-2 rounded-sm">
+              <p>{comments.length}</p>
+            </div>
+          </div>
+
+          {comments.map((comment) => {
+            const key = comment._id || comment.createdAt;
+            return key ? (
+              <Comment
+                key={key}
+                comment={comment}
+                onLike={handleLike}
+                onEdit={handleCommentEdit}
+              />
+            ) : null; // skip rendering if no valid key
+          })}
+        </>
+      )}
+    </div>
+  );
+};
