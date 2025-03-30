@@ -14,7 +14,7 @@ export const CommentSection = ({ postId }) => {
   const [comments, setComments] = useState([]);
   const [error, setError] = useState("");
   const [showModal,setShowModal] = useState(false);
-  const [commentToDelete,setCommentToDelete] = useState(false);
+  const [commentToDelete,setCommentToDelete] = useState(null);
 
   const navigate = useNavigate();
 
@@ -78,7 +78,6 @@ export const CommentSection = ({ postId }) => {
       navigate("/sign-in");
       return;
     }
-    console.log("commentId", commentId);
     // Logic to handle like
     axiosInstance
       .put(`/comment/likeComment/${commentId}`)
@@ -112,14 +111,20 @@ export const CommentSection = ({ postId }) => {
       ));
   };
 
-  const handleDeleteComment = (commentId) => {
+  const handleDeleteComment = () => {
+
+    setShowModal(false);
+    
+    if(!currentUser){
+        navigate("/sign-in");
+        return;
+    }
 
     axiosInstance
-     .delete(`/comment/deleteComment/${commentId}`)
+     .delete(`/comment/deleteComment/${commentToDelete}`)
      .then((res) => {
         if (res.data.success === true) {
-          setComments(comments.filter((comment) => comment._id!== commentId));
-          setShowModal(false);
+          setComments(comments.filter((comment) => comment._id!== commentToDelete));
         } else {
           setError("Failed to delete comment!");
         }
@@ -234,7 +239,7 @@ export const CommentSection = ({ postId }) => {
                   </h3>
                   <div className="flex justify-center gap-4">
                     <Button color="failure" 
-                    onClick={handleDeleteComment(commentToDelete)}
+                    onClick={handleDeleteComment}
                     >
                       Yes, I'm sure
                     </Button>
