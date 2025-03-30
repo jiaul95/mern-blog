@@ -112,15 +112,13 @@ export const CommentSection = ({ postId }) => {
       ));
   };
 
-  const handleDeleteComment = (e) => {
-
-    e.preventDefault();
+  const handleDeleteComment = (commentId) => {
 
     axiosInstance
-     .delete(`/comment/deleteComment/${commentToDelete}`)
+     .delete(`/comment/deleteComment/${commentId}`)
      .then((res) => {
         if (res.data.success === true) {
-          setComments(comments.filter((comment) => comment._id!== commentToDelete));
+          setComments(comments.filter((comment) => comment._id!== commentId));
           setShowModal(false);
         } else {
           setError("Failed to delete comment!");
@@ -236,7 +234,7 @@ export const CommentSection = ({ postId }) => {
                   </h3>
                   <div className="flex justify-center gap-4">
                     <Button color="failure" 
-                    onClick={handleDeleteComment}
+                    onClick={handleDeleteComment(commentToDelete)}
                     >
                       Yes, I'm sure
                     </Button>
