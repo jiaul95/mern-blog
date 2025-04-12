@@ -6,11 +6,15 @@ import {
   individualPostFetchStart,
   individualPostFetchSuccess,
   individualPostFetchFailure,
+  recentPostFetchStart,
+  recentPostFetchSuccess,
+  recentPostFetchFailure,
 } from "../features/user/postSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { CallToAction } from "../components/CallToAction";
 import { CommentSection } from "../components/CommentSection";
+import { PostCard } from "../components/PostCard";
 
 export const PostPage = () => {
 
@@ -19,6 +23,9 @@ export const PostPage = () => {
 
   const { loading } = useSelector((state) => state.post);
   const individualPost = useSelector((state) => state.post?.individualPost) || {};
+  const recentPosts = useSelector((state) => state.post?.recentPosts) || {};
+
+  // const [recentPosts, setRecentPosts] = useState(null);
   
   useEffect(() => {
     dispatch(individualPostFetchStart());
@@ -36,6 +43,27 @@ export const PostPage = () => {
         dispatch(individualPostFetchFailure(error.response.data.message));
       });
   }, [postSlug]);
+
+  useEffect(() => {
+    dispatch(recentPostFetchStart());
+    axiosInstance
+      .get("/post/getPosts?limit=3")
+      .then((res) => {
+        if (res.data.success === true) {
+          console.log("recent post", res.data.data.posts);
+
+          dispatch(recentPostFetchSuccess(res.data.data.posts));
+        } else {
+          dispatch(recentPostFetchFailure("Failed to fetch more posts!"));
+        }
+      })
+      .catch((error) => {
+        console.error("Error Response", error);
+        dispatch(recentPostFetchFailure(error.response.data.message));
+      });
+    
+  },[]);
+
   
   if (loading){
     return (
@@ -96,6 +124,16 @@ export const PostPage = () => {
       </div>
 
       <CommentSection postId={individualPost._id} />
+
+      <div className="flex flex-col justify-center items-center mb-5">
+        <h1 className="text-xl mt-5">Recent articles</h1>
+        <div className="flex flex-wrap gap-5 mt-5 justify-center">
+            {recentPosts && 
+              recentPosts.map((post) => (
+                <PostCard key={post._id} post={post} />
+              ))}            
+        </div>
+      </div>
 
     </main>
   );

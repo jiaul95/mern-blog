@@ -7,6 +7,7 @@ const initialState = {
   successMessage:null, 
   allPosts:[],
   individualPost: null,
+  recentPosts: null
 }
 
 export const postSlice = createSlice({
@@ -95,6 +96,19 @@ export const postSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    recentPostFetchStart: (state) => {
+      state.error = null;
+      state.loading = true;
+    },
+    recentPostFetchSuccess: (state,action) => {
+      state.recentPosts = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    recentPostFetchFailure: (state,action) => {
+      state.error = action.payload;
+      state.loading = false;
+    },
 
     createCommentStart: (state) => {
       state.error = null;
@@ -143,7 +157,10 @@ export const {
               individualPostFetchFailure,
               createCommentStart,
               createCommentSuccess,
-              createCommentFailure
+              createCommentFailure,
+              recentPostFetchStart,
+              recentPostFetchSuccess,
+              recentPostFetchFailure
               } = postSlice.actions
 
 export default postSlice.reducer
