@@ -6,6 +6,7 @@ const initialState = {
   loading: false,
   successMessage:null, 
   allPosts:[],
+  allComments:[],
   individualPost: null,
   recentPosts: null
 }
@@ -133,6 +134,31 @@ export const postSlice = createSlice({
     //   state.error = action.payload;
     // },
 
+    commentsFetchSuccess: (state,action) => {
+      state.allComments = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    commentsFetchFailure: (state,action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    deleteCommentStart:(state) => {
+      state.error = null;
+      state.loading = true;
+      state.currentUser = null;
+    },
+
+    deleteCommentSuccess:(state) => {
+      state.error = null;
+      state.loading = false;
+      state.currentUser = null;
+    },
+
+    deleteCommentFailure:(state,action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
 
   },
 })
@@ -160,7 +186,12 @@ export const {
               createCommentFailure,
               recentPostFetchStart,
               recentPostFetchSuccess,
-              recentPostFetchFailure
+              recentPostFetchFailure,
+              commentsFetchSuccess,
+              commentsFetchFailure,
+              deleteCommentStart,
+              deleteCommentSuccess,
+              deleteCommentFailure
               } = postSlice.actions
 
 export default postSlice.reducer

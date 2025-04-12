@@ -5,15 +5,16 @@ import { HiArrowSmRight } from "react-icons/hi";
 import { HiDocumentText } from "react-icons/hi";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation} from "react-router-dom";
 import { signoutUserSuccess } from "../features/user/userSlice";
 import axiosInstance from "../../axios/axios";
+import { FaComment } from "react-icons/fa";
 export const DashSidebar = () =>{
     
   const dispatch = useDispatch();
   const location = useLocation();
   const [tab,setTab] = useState("");
-  const navigate = useNavigate();
+//   const navigate = useNavigate();
   
     const  {
       currentUser
@@ -80,6 +81,14 @@ export const DashSidebar = () =>{
                         <Link to='/dashboard?tab=users'>
                           <Sidebar.Item active={tab==="users"} icon={HiOutlineUserGroup} as="div">
                               Users
+                          </Sidebar.Item>
+                        </Link>
+                    )}
+
+                    {currentUser.isAdmin && (
+                        <Link to='/dashboard?tab=comments'>
+                          <Sidebar.Item active={tab==="comments"} icon={FaComment} as="div">
+                              Comments
                           </Sidebar.Item>
                         </Link>
                     )}
