@@ -19,7 +19,6 @@ export const Dashboard = () => {
     if(tabFromUrl){
       setTab(tabFromUrl); 
     }
-    // console.log("tab from url: " + tabFromUrl);
   },[location.search]);
 
   return (
@@ -27,6 +26,9 @@ export const Dashboard = () => {
       <div className="md:w-56">        
         <DashSidebar />
       </div>
+
+      {!tab && <DashboardComp/>}
+
       {/* profile */}
       {tab === "profile" && <DashProfile/>}
 

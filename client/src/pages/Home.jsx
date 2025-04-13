@@ -1,10 +1,78 @@
-import "../index.css";
+import { Link } from "react-router-dom"
+import { CallToAction } from "../components/CallToAction"
+import axiosInstance from "../../axios/axios";
+import { useEffect, useState } from "react";
+import { postFetchFailure, postFetchSuccess } from "../features/user/postSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { PostCard } from "../components/PostCard";
 
 export const Home = () => {
+
+    const dispatch = useDispatch();
+    const [showMore, setShowMore] = useState(true);
+    
+    const allPosts = useSelector((state) => state.post?.allPosts) || [];
+  
+    useEffect(() => {
+      const getAllPosts = () => {
+        axiosInstance
+          .get(`/post/getPosts`)
+          .then((res) => {
+            if (res.data.success === true) {
+              dispatch(postFetchSuccess(res.data.data.posts || []));
+              if (res.data.data.posts?.length < 9) {
+                setShowMore(false);
+              }
+            } else {
+              dispatch(postFetchFailure("Failed to fetch posts!"));
+            }
+          })
+          .catch((error) => {
+            console.error("Error Response", error);
+            // dispatch(postFetchFailure(error.response.data.message));
+          });
+      };
+  
+      // if (currentUser?.isAdmin) {
+        getAllPosts();
+      // }
+    }, []);
+
   return (
     <div>
-        Home
-      
+        <div className="flex flex-col gap-6 p-28 px-3 max-w-6xl mx-auto">
+            <h1 className="text-3xl font-bold lg:text-6xl">Welcome to my Blog</h1>
+            <p className="text-gray-500 text-xs sm:text-sm">
+              Here you'll find a variety of articles and tutorials and tutorials on topics
+              such as web development, softwaare engineering, and programming languages.            
+            </p>
+            <Link to={`/search`} className="text-xs sm:text-sm text-teal-500 font-bold hover:underline">
+              View all posts
+            </Link>          
+        </div>     
+
+        <div className="p-3 bg-amber-100 dark:bg-slate-700 ">
+            <CallToAction />
+        </div>
+
+        <div className="max-w-6xl mx-auto p-3 flex flex-col gap-8 py-7"> 
+            {allPosts && allPosts.length > 0 && (
+              <div className="flex flex-col gap-6">
+                  <h2 className="text-2xl font-semibold text-center">Recent Posts</h2>
+                  <div className="flex flex-wrap gap-4">
+                      {allPosts.map((post)=>(
+                          <PostCard key={post._id} post={post} />
+                        ))}
+                  </div>  
+                  <Link to={`/search`} className="text-lg text-teal-500 hover:underline text-center">
+                      View all posts
+                  </Link>                
+              </div>
+            )}            
+        </div>
+
+       
+
     </div>
   )
 }

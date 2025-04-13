@@ -40,20 +40,6 @@ export const DashSidebar = () =>{
     .then((res) => {
         if(res.data.success === true){         
             dispatch(signoutUserSuccess());
-
-            // const protectedRoutes = ["/dashboard", "/create-post", "/update-post/:postId"];
-            
-            // const currentPath = location.pathname;
-
-            // // Check if the current path is protected
-            // const shouldRedirect = protectedRoutes.some((route) =>
-            //   currentPath.startsWith(route)
-            // );
-            
-            // if (shouldRedirect) {
-            //   navigate("/sign-in");
-            // }
-
         }
     })
     .catch((error) => {
@@ -64,10 +50,7 @@ export const DashSidebar = () =>{
     return (
        <Sidebar className="w-full md:w-56">
             <Sidebar.Items>
-                <Sidebar.ItemGroup className="flex flex-col gap-1">
-
-
-                    
+                <Sidebar.ItemGroup className="flex flex-col gap-1">                    
                     {currentUser && currentUser.isAdmin && (
                         <Link to='/dashboard?tab=dash'>
                           <Sidebar.Item  active={tab==="dash" || !tab} icon={HiChartPie} as="div">
