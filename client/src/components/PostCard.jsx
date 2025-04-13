@@ -1,13 +1,6 @@
-import { Alert, Button, Modal, Textarea } from "flowbite-react";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import axiosInstance from "../../axios/axios.js";
-import { dismissImageAlert } from "../features/user/postSlice.js";
-import "react-circular-progressbar/dist/styles.css";
-import { Link, useNavigate } from "react-router-dom";
-import { Comment } from "./Comment.jsx";
-import { HiOutlineExclamationCircle } from "react-icons/hi";
 
+import "react-circular-progressbar/dist/styles.css";
+import { Link} from "react-router-dom";
 export const PostCard = ({post}) => {
   return (
     <div className="group relative w-full border h-[350px] overflow-hidden rounded-lg sm:w-[400px]
