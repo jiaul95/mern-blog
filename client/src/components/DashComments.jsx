@@ -3,14 +3,12 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "../../axios/axios.js";
 import {
-  postFetchSuccess,
   dismissImageAlert,
   commentsFetchSuccess,
   commentsFetchFailure,
   deleteCommentStart,
   deleteCommentSuccess,
   deleteCommentFailure,
-
 } from "../features/user/postSlice.js";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 
@@ -26,9 +24,9 @@ export const DashComments = () => {
 
   console.log("allComments", allComments);
 
-  const handleShowModal = (postId) => {
+  const handleShowModal = (commentId) => {
     setShowModal(true);
-    setCommentIdToDelete(postId);
+    setCommentIdToDelete(commentId);
   };
 
   const handleDeleteComment = async () => {
@@ -37,7 +35,7 @@ export const DashComments = () => {
     dispatch(deleteCommentStart());
 
     await axiosInstance
-      .delete(`/post/deleteComment/${commentIdToDelete}/${currentUser._id}`)
+      .delete(`/comment/deleteComment/${commentIdToDelete}`)
       .then((res) => {
         if (res.data.success === true) {
           const newData = Array.isArray(res.data.data)
@@ -64,7 +62,7 @@ export const DashComments = () => {
       axiosInstance
         .get(`/comment/getComments`)
         .then((res) => {
-          if (res.data.success === true) {            
+          if (res.data.success === true) {
             dispatch(commentsFetchSuccess(res.data.data.comments || []));
             if (res.data.data.comments?.length < 9) {
               setShowMore(false);
@@ -86,11 +84,13 @@ export const DashComments = () => {
 
   const handleShowMore = () => {
     axiosInstance
-      .get(`/comment/getComments?userId=${currentUser._id}&skip=${allComments.length}`)
+      .get(`/comment/getComments?skip=${allComments.length}`)
       .then((res) => {
         if (res.data.success === true) {
           console.log("res.data.data.comments", res.data.data.comments);
-          dispatch(commentsFetchSuccess([...allComments, ...res.data.data.comments]));
+          dispatch(
+            commentsFetchSuccess([...allComments, ...res.data.data.comments])
+          );
           if (res.data.data.comments?.length || 0 < 9) {
             setShowMore(false);
           }
@@ -128,21 +128,18 @@ export const DashComments = () => {
                   <Table.Cell>
                     {new Date(comment.updatedAt).toLocaleDateString()}
                   </Table.Cell>
-                  <Table.Cell>
-                    {comment.comment}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {comment.numberOfLikes}                    
-                  </Table.Cell>
+                  <Table.Cell>{comment.comment}</Table.Cell>
+                  <Table.Cell>{comment.numberOfLikes}</Table.Cell>
                   <Table.Cell>{comment.postId}</Table.Cell>
                   <Table.Cell>{comment.userId}</Table.Cell>
                   <Table.Cell>
                     <span
                       className="font-medium text-red-500 hover:underline cursor-pointer"
-                      onClick={() => handleShowModal(comment._id)}>
+                      onClick={() => handleShowModal(comment._id)}
+                    >
                       Delete
                     </span>
-                  </Table.Cell>                 
+                  </Table.Cell>
                 </Table.Row>
               </Table.Body>
             ))}

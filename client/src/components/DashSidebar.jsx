@@ -8,7 +8,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation} from "react-router-dom";
 import { signoutUserSuccess } from "../features/user/userSlice";
 import axiosInstance from "../../axios/axios";
-import { FaComment } from "react-icons/fa";
+import { HiAnnotation } from "react-icons/hi";
+
 export const DashSidebar = () =>{
     
   const dispatch = useDispatch();
@@ -87,7 +88,7 @@ export const DashSidebar = () =>{
 
                     {currentUser.isAdmin && (
                         <Link to='/dashboard?tab=comments'>
-                          <Sidebar.Item active={tab==="comments"} icon={FaComment} as="div">
+                          <Sidebar.Item active={tab==="comments"} icon={HiAnnotation} as="div">
                               Comments
                           </Sidebar.Item>
                         </Link>
