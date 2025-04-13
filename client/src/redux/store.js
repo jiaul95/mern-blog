@@ -2,7 +2,7 @@ import {configureStore,combineReducers} from "@reduxjs/toolkit";
 
 import userReducer from "../features/user/userSlice";
 import themeReducer from "../features/theme/themeSlice";
-import postReducer from "../features/user/postSlice";
+import postReducer from "../features/user/postSlice"
 
 
 import {persistReducer, persistStore} from "redux-persist";

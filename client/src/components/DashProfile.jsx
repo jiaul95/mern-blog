@@ -12,15 +12,15 @@ import { imageUploadStart,
         updateSuccess,
         updateFailure,
         updateUserSuccess, 
-        deleteUserStart,
-        deleteUserSuccess,
-        deleteUserFailure ,
+        deleteAdminUserStart,
+        deleteAdminUserSuccess,
+        deleteAdminUserFailure ,
         signoutUserSuccess
     } from "../features/user/userSlice.js";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 
 export const DashProfile = () =>{
@@ -28,7 +28,9 @@ export const DashProfile = () =>{
   const [imageFile,setImageFile] = useState(null);
   const [imageFileUrl,setImageFileUrl] = useState(null);
   const filePickerRef = useRef(null);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch();  
+  const navigate = useNavigate();
+  const location = useLocation();
   const {
         currentUser,
         updateUserSuccess:updateSuccessMessage,
@@ -91,19 +93,19 @@ export const DashProfile = () =>{
 
         setShowModal(false);
 
-        dispatch(deleteUserStart());
+        dispatch(deleteAdminUserStart());
 
         await axiosInstance.delete(`/delete/${currentUser._id}`)
         .then((res) => {
             if(res.data.success === true){         
-                dispatch(deleteUserSuccess(res.data.message));
+                dispatch(deleteAdminUserSuccess(res.data.message));
             }else
             {
-                dispatch(deleteUserFailure("Failed to delete profile!"));
+                dispatch(deleteAdminUserFailure("Failed to delete profile!"));
             }
         })
         .catch((error) => {
-            dispatch(deleteUserFailure(error.response.data.message));
+            dispatch(deleteAdminUserFailure(error.response.data.message));
         }); 
     }
 
@@ -113,6 +115,18 @@ export const DashProfile = () =>{
         .then((res) => {
             if(res.data.success === true){         
                 dispatch(signoutUserSuccess());
+                // const protectedRoutes = ["/dashboard", "/create-post", "/update-post/:postId"];
+            
+                // const currentPath = location.pathname;
+    
+                // // Check if the current path is protected
+                // const shouldRedirect = protectedRoutes.some((route) =>
+                //   currentPath.startsWith(route)
+                // );
+    
+                // if (shouldRedirect) {
+                //   navigate("/sign-in");
+                // }
             }
         })
         .catch((error) => {

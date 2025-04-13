@@ -5,7 +5,10 @@ const initialState = {
   error: null,
   loading: false,
   successMessage:null, 
-  allPosts:[]
+  allPosts:[],
+  allComments:[],
+  individualPost: null,
+  recentPosts: null
 }
 
 export const postSlice = createSlice({
@@ -70,19 +73,92 @@ export const postSlice = createSlice({
     updatePostStart: (state) => {
       state.error = null;
       state.loading = true;
-     },
-     updatePostSuccess: (state,action) => {
-       state.currentUser = action.payload;
-       state.loading = false;
-       state.error = null;
-     },
-     updatePostFailure: (state,action) => {
-       state.loading = false;
-       state.error = action.payload;
-     },     
-    
+    },
+    updatePostSuccess: (state,action) => {
+      state.currentUser = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    updatePostFailure: (state,action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },     
+        
+    individualPostFetchStart: (state) => {
+      state.error = null;
+      state.loading = true;
+    },
+    individualPostFetchSuccess: (state,action) => {
+      state.individualPost = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    individualPostFetchFailure: (state,action) => {
+      state.error = action.payload;
+      state.loading = false;
+    },
+    recentPostFetchStart: (state) => {
+      state.error = null;
+      state.loading = true;
+    },
+    recentPostFetchSuccess: (state,action) => {
+      state.recentPosts = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    recentPostFetchFailure: (state,action) => {
+      state.error = action.payload;
+      state.loading = false;
+    },
 
+    createCommentStart: (state) => {
+      state.error = null;
+    },
+    createCommentSuccess: (state,action) => {
+      state.individualPost = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    createCommentFailure: (state,action) => {
+      state.error = action.payload;
+      state.loading = false;
+    },
 
+    // commentsFetchSuccess: (state,action) => {
+    //   state.allPosts = action.payload;
+    //   state.loading = false;
+    //   state.error = null;
+    // },
+    // commentsFetchFailure: (state,action) => {
+    //   state.loading = false;
+    //   state.error = action.payload;
+    // },
+
+    commentsFetchSuccess: (state,action) => {
+      state.allComments = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    commentsFetchFailure: (state,action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    deleteCommentStart:(state) => {
+      state.error = null;
+      state.loading = true;
+      state.currentUser = null;
+    },
+
+    deleteCommentSuccess:(state) => {
+      state.error = null;
+      state.loading = false;
+      state.currentUser = null;
+    },
+
+    deleteCommentFailure:(state,action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
 
   },
 })
@@ -102,6 +178,20 @@ export const {
               updatePostStart,
               updatePostSuccess,
               updatePostFailure,
+              individualPostFetchStart,
+              individualPostFetchSuccess,
+              individualPostFetchFailure,
+              createCommentStart,
+              createCommentSuccess,
+              createCommentFailure,
+              recentPostFetchStart,
+              recentPostFetchSuccess,
+              recentPostFetchFailure,
+              commentsFetchSuccess,
+              commentsFetchFailure,
+              deleteCommentStart,
+              deleteCommentSuccess,
+              deleteCommentFailure
               } = postSlice.actions
 
 export default postSlice.reducer

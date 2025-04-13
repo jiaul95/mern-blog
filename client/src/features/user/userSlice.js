@@ -7,6 +7,8 @@ const initialState = {
     profilePicture: null,
     progressBar: 0,
     updateUserSuccess:null,
+    allUsers:[]
+
  
 }
 
@@ -73,19 +75,18 @@ export const userSlice = createSlice({
       state.updateUserSuccess = null;
     },
 
-    deleteUserStart:(state) => {
+    deleteAdminUserStart:(state) => {
       state.error = null;
       state.loading = true;
-      state.currentUser = null;
     },
 
-    deleteUserSuccess:(state) => {
+    deleteAdminUserSuccess:(state) => {
       state.error = null;
       state.loading = false;
       state.currentUser = null;
     },
 
-    deleteUserFailure:(state,action) => {
+    deleteAdminUserFailure:(state,action) => {
       state.loading = false;
       state.error = action.payload;
     },
@@ -93,9 +94,49 @@ export const userSlice = createSlice({
       state.currentUser = null;
       state.error = null;
       state.loading = false;
-    }
-  
-   
+    },
+
+    
+    userFetchSuccess: (state,action) => {
+      state.allUsers = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    userFetchFailure: (state,action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    
+    deletePostStart:(state) => {
+      state.error = null;
+      state.loading = true;
+    },
+
+    deletePostSuccess:(state) => {
+      state.error = null;
+      state.loading = false;
+      state.currentUser = null;
+    },
+
+    deletePostFailure:(state,action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+
+    deleteUserStart:(state) => {
+      state.error = null;
+      state.loading = true;
+    },
+
+    deleteUserSuccess:(state) => {
+      state.error = null;
+      state.loading = false;
+    },
+
+    deleteUserFailure:(state,action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
 
     
   },
@@ -115,10 +156,15 @@ export const { signInStart,
                 updateSuccess,
                 updateFailure,
                 updateUserSuccess,
+                deleteAdminUserStart,
+                deleteAdminUserSuccess,
+                deleteAdminUserFailure,
                 deleteUserStart,
                 deleteUserSuccess,
                 deleteUserFailure,
-                signoutUserSuccess
+                signoutUserSuccess,
+                userFetchSuccess,
+                userFetchFailure                
               } = userSlice.actions
 
 export default userSlice.reducer

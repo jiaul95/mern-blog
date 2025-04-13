@@ -3,101 +3,104 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "../../axios/axios.js";
 import {
-  postFetchSuccess,
-  postFetchFailure,
-  deletePostStart,
-  deletePostSuccess,
-  deletePostFailure,
   dismissImageAlert,
+  commentsFetchSuccess,
+  commentsFetchFailure,
+  deleteCommentStart,
+  deleteCommentSuccess,
+  deleteCommentFailure,
 } from "../features/user/postSlice.js";
-import { Link } from "react-router-dom";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 
-export const DashPosts = () => {
+export const DashComments = () => {
   const dispatch = useDispatch();
   const { currentUser, error: errorMessage } = useSelector(
     (state) => state.user
   );
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [postIdToDelete, setPostIdToDelete] = useState("");
-  const allPosts = useSelector((state) => state.post?.allPosts) || [];
+  const [commentIdToDelete, setCommentIdToDelete] = useState("");
+  const allComments = useSelector((state) => state.post?.allComments) || [];
 
+  console.log("allComments", allComments);
 
-  const handleShowModal = (postId) => {
+  const handleShowModal = (commentId) => {
     setShowModal(true);
-    setPostIdToDelete(postId);
+    setCommentIdToDelete(commentId);
   };
 
-  const handleDeletePost = async () => {
+  const handleDeleteComment = async () => {
     setShowModal(false);
 
-    dispatch(deletePostStart());
+    dispatch(deleteCommentStart());
 
     await axiosInstance
-      .delete(`/post/deletePost/${postIdToDelete}/${currentUser._id}`)
+      .delete(`/comment/deleteComment/${commentIdToDelete}`)
       .then((res) => {
         if (res.data.success === true) {
           const newData = Array.isArray(res.data.data)
             ? res.data.data
             : [res.data.data];
 
-          const updatedPosts = allPosts
-            .filter((post) => post._id !== postIdToDelete)
+          const updatedComments = allComments
+            .filter((post) => post._id !== commentIdToDelete)
             .concat(newData);
 
-          dispatch(deletePostSuccess(res.data.message));
-          dispatch(postFetchSuccess(updatedPosts));
+          dispatch(deleteCommentSuccess(res.data.message));
+          dispatch(commentsFetchSuccess(updatedComments));
         } else {
-          dispatch(deletePostFailure("Failed to delete profile!"));
+          dispatch(deleteCommentFailure("Failed to delete profile!"));
         }
       })
       .catch((error) => {
-        dispatch(deletePostFailure(error.response.data.message));
+        dispatch(deleteCommentFailure(error.response.data.message));
       });
   };
 
   useEffect(() => {
-    const getAllPosts = () => {
+    const getAllComments = () => {
       axiosInstance
-        .get(`/post/getPosts?userId=${currentUser._id}`)
+        .get(`/comment/getComments`)
         .then((res) => {
           if (res.data.success === true) {
-            dispatch(postFetchSuccess(res.data.data.posts || []));
-            if (res.data.data.posts?.length < 9) {
+            dispatch(commentsFetchSuccess(res.data.data.comments || []));
+            if (res.data.data.comments?.length < 9) {
               setShowMore(false);
             }
           } else {
-            dispatch(postFetchFailure("Failed to fetch posts!"));
+            dispatch(commentsFetchFailure("Failed to fetch comments!"));
           }
         })
         .catch((error) => {
           console.error("Error Response", error);
-          dispatch(postFetchFailure(error.response.data.message));
+          dispatch(commentsFetchFailure(error.response.data.message));
         });
     };
 
     if (currentUser?.isAdmin) {
-      getAllPosts();
+      getAllComments();
     }
   }, [currentUser._id]);
 
   const handleShowMore = () => {
     axiosInstance
-      .get(`/post/getPosts?userId=${currentUser._id}&skip=${allPosts.length}`)
+      .get(`/comment/getComments?skip=${allComments.length}`)
       .then((res) => {
         if (res.data.success === true) {
-          dispatch(postFetchSuccess([...allPosts, ...res.data.data.posts]));
-          if (res.data.data.posts?.length || 0 < 9) {
+          console.log("res.data.data.comments", res.data.data.comments);
+          dispatch(
+            commentsFetchSuccess([...allComments, ...res.data.data.comments])
+          );
+          if (res.data.data.comments?.length || 0 < 9) {
             setShowMore(false);
           }
         } else {
-          dispatch(postFetchFailure("Failed to fetch more posts!"));
+          dispatch(commentsFetchFailure("Failed to fetch more comments!"));
         }
       })
       .catch((error) => {
         console.error("Error Response", error);
-        dispatch(postFetchFailure(error.response.data.message));
+        dispatch(commentsFetchFailure(error.response.data.message));
       });
   };
 
@@ -108,51 +111,34 @@ export const DashPosts = () => {
         dark:scrollbar-track-slate-700 dark:scrillbar-thumb-slate-500
         "
     >
-      {currentUser?.isAdmin && allPosts.length > 0 ? (
+      {currentUser?.isAdmin && allComments.length > 0 ? (
         <>
           <Table hoverable className="shadow-md">
             <Table.Head>
               <Table.HeadCell>Date updated</Table.HeadCell>
-              <Table.HeadCell>Post image</Table.HeadCell>
-              <Table.HeadCell>Post title</Table.HeadCell>
-              <Table.HeadCell>Category</Table.HeadCell>
+              <Table.HeadCell>Comment content</Table.HeadCell>
+              <Table.HeadCell>Number of likes</Table.HeadCell>
+              <Table.HeadCell>PostId</Table.HeadCell>
+              <Table.HeadCell>UserId</Table.HeadCell>
               <Table.HeadCell>Delete</Table.HeadCell>
-              <Table.HeadCell>
-                <span>Edit</span>
-              </Table.HeadCell>
             </Table.Head>
-            {allPosts.map((post) => (
-              <Table.Body key={post._id} className="divide-y">
+            {allComments.map((comment) => (
+              <Table.Body key={comment._id} className="divide-y">
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                   <Table.Cell>
-                    {new Date(post.updatedAt).toLocaleDateString()}
+                    {new Date(comment.updatedAt).toLocaleDateString()}
                   </Table.Cell>
-                  <Table.Cell>
-                    <Link to={`/post/${post.slug}`}>
-                      <img
-                        src={post.image}
-                        alt={post.title}
-                        className="w-20 h-10 object-cover bg-gray-500"
-                      />
-                    </Link>
-                  </Table.Cell>
-                  <Table.Cell className="font-medium text-gray-900 dark:text-white">
-                    <Link to={`/post/${post.slug}`}>{post.title}</Link>
-                  </Table.Cell>
-                  <Table.Cell>{post.category}</Table.Cell>
+                  <Table.Cell>{comment.comment}</Table.Cell>
+                  <Table.Cell>{comment.numberOfLikes}</Table.Cell>
+                  <Table.Cell>{comment.postId}</Table.Cell>
+                  <Table.Cell>{comment.userId}</Table.Cell>
                   <Table.Cell>
                     <span
-                      className="font-medium text-red-500 
-                                        hover:underline cursor-pointer"
-                      onClick={() => handleShowModal(post._id)}
+                      className="font-medium text-red-500 hover:underline cursor-pointer"
+                      onClick={() => handleShowModal(comment._id)}
                     >
                       Delete
                     </span>
-                  </Table.Cell>
-                  <Table.Cell className="text-teal-500 hover:underline cursor-pointer">
-                    <Link to={`/update-post/${post._id}`}>
-                      <span>Edit</span>
-                    </Link>
                   </Table.Cell>
                 </Table.Row>
               </Table.Body>
@@ -170,7 +156,7 @@ export const DashPosts = () => {
           )}
         </>
       ) : (
-        <p>You have no posts yet</p>
+        <p>You have no comments yet</p>
       )}
 
       <Modal
@@ -188,7 +174,7 @@ export const DashPosts = () => {
               Are you sure you want to delete your post ?
             </h3>
             <div className="flex justify-center gap-4">
-              <Button color="failure" onClick={handleDeletePost}>
+              <Button color="failure" onClick={handleDeleteComment}>
                 Yes, I'm sure
               </Button>
               <Button color="gray" onClick={() => setShowModal(false)}>
