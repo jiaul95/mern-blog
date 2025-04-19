@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme } from "../features/theme/themeSlice";
 import { signoutUserSuccess } from "../features/user/userSlice";
 import axiosInstance from "../../axios/axios";
+import { useEffect, useState } from "react";
 
 export const Header = () => {
   const path = useLocation().pathname;
@@ -18,6 +19,32 @@ export const Header = () => {
   const location = useLocation();
 
   const { currentUser } = useSelector((state) => state.user);
+  const [searchTerm, setSearchTerm] = useState("");
+
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermFromUrl = urlParams.get("searchTerm");
+    console.log("search term from url", searchTermFromUrl);
+    if (searchTermFromUrl) {
+      setSearchTerm(searchTermFromUrl);    
+    }
+  },[location.search]);
+
+  console.log("search term", searchTerm);
+
+  const handleSubmit = (e) => {
+
+    e.preventDefault(); 
+    if (searchTerm.trim() === "") {
+      return; 
+    }
+
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("searchTerm", searchTerm);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
+  }
 
   const handleTheme = () => {
     dispatch(toggleTheme());
@@ -75,12 +102,14 @@ export const Header = () => {
         Blog
       </Link>
 
-      <form>
+      <form onSubmit={handleSubmit}>
         <TextInput
           type="text"
           placeholder="Search..."
           rightIcon={AiOutlineSearch}
           className="hidden lg:inline"
+          value={searchTerm}
+          onChange={(e)=> setSearchTerm(e.target.value)}
         />
       </form>
       <Button className="w-12 h-10 lg:hidden" color="gray" pill>

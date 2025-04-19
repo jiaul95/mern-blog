@@ -7,8 +7,8 @@ const initialState = {
   successMessage:null, 
   allPosts:[],
   allComments:[],
-  individualPost: null,
-  recentPosts: null
+  individualPost: {},
+  recentPosts: []
 }
 
 export const postSlice = createSlice({
@@ -41,6 +41,12 @@ export const postSlice = createSlice({
     imageUploadFailure: (state,action) => {
       state.loading = false;
       state.error = action.payload;
+    },
+
+    
+    postFetchStart: (state) => {
+      state.error = null;
+      state.loading = true;
     },
 
     postFetchSuccess: (state,action) => {
@@ -170,6 +176,7 @@ export const {
               dismissImageAlert,
               successAlert,
               imageUploadFailure,
+              postFetchStart,
               postFetchSuccess,
               postFetchFailure,
               deletePostStart,

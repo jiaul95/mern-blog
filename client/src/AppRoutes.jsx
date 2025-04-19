@@ -12,6 +12,7 @@ import { UpdatePost } from "./pages/UpdatePost.jsx";
 import { PostPage } from "./pages/PostPage.jsx";
 import { PrivateRoute } from "./components/PrivateRoute.jsx";
 import { OnlyAdminPrivateRoute } from "./components/OnlyAdminPrivateRoute.jsx";
+import { Search } from "./pages/Search.jsx";
 
 const AppRoutes = () => {
 
@@ -23,6 +24,8 @@ const AppRoutes = () => {
       <Route path="/sign-up" element={<SignUp />} />
       <Route path="/projects" element={<Projects />} />
       <Route path="/post/:postSlug" element={<PostPage />} />
+      <Route path="/search" element={<Search />} />
+
 
         <>
           <Route element={<PrivateRoute />}>

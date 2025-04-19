@@ -23,15 +23,13 @@ export const PostPage = () => {
 
   const { loading } = useSelector((state) => state.post);
   const individualPost = useSelector((state) => state.post?.individualPost) || {};
-  const recentPosts = useSelector((state) => state.post?.recentPosts) || {};
-  console.log("recent posts", recentPosts);
-  // const [recentPosts, setRecentPosts] = useState(null);
+  const recentPosts = useSelector((state) => state.post?.recentPosts) || [];
   
   useEffect(() => {
     dispatch(individualPostFetchStart());
     axiosInstance
       .get(`/post/getPosts?slug=${postSlug}`)
-      .then((res) => {
+    .then((res) => {
         if (res.data.success === true) {
           dispatch(individualPostFetchSuccess(res.data.data.posts[0]));
         } else {
