@@ -1,6 +1,6 @@
 import axios from "axios";
 import { store } from "../src/redux/store.js";
-import { signoutUserSuccess } from "../src/features/user/userSlice.js";
+import { signoutUserSuccess,signInFailure } from "../src/features/user/userSlice.js";
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:8000/api/v1",
@@ -11,20 +11,34 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.response.use(
-  (response) => {
-    // console.log("✅ Success Response:", {
-    //   url: response.config.url,
-    //   method: response.config.method,
-    //   status: response.status,
-    //   data: response.data,
-    // });
-
+  (response) => {    
     return response;
   },
   async (error) => {
     const originalRequest = error.config;
     const status = error.response?.status;
-    const isRefreshRequest = originalRequest.url.includes("/refreshToken");
+    const isRefreshRequest = originalRequest.url?.includes("/refreshToken");
+
+    // ✅ Handle Network Errors (no response received)
+    if (!error.response) {
+      console.error("❌ Network Error:", error.message);
+
+      // Example: Handle ERR_CONNECTION_RESET or any network failure
+      if (
+        error.message.includes("ERR_CONNECTION_RESET") ||
+        error.code === "ECONNABORTED" ||
+        error.code === "ECONNREFUSED" ||
+        error.message.includes("Network Error")
+      ) {
+        // alert("Connection lost. Please check your internet or try again later.");
+        // Optionally redirect or logout
+        store.dispatch(signInFailure("Connection lost."));
+        
+        // window.location.href = "/sign-in";
+        return Promise.reject(error);
+      }
+    }
+
 
     // Prevent infinite loop if refreshToken itself fails
     if ([401, 403,500].includes(status) && !originalRequest._retry && !isRefreshRequest) {
@@ -38,7 +52,6 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
-
     return Promise.reject(error);
   }
 );

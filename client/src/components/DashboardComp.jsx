@@ -8,12 +8,7 @@ import { HiAnnotation } from "react-icons/hi";
 import { HiDocumentText } from "react-icons/hi";
 
 import {
-  postFetchSuccess,
   postFetchFailure,
-  deletePostStart,
-  deletePostSuccess,
-  deletePostFailure,
-  dismissImageAlert,
   commentsFetchFailure,
 } from "../features/user/postSlice.js";
 import { userFetchFailure } from "../features/user/userSlice.js";
