@@ -3,7 +3,7 @@ import { store } from "../src/redux/store.js";
 import { signoutUserSuccess,signInFailure } from "../src/features/user/userSlice.js";
 
 
-const baseURL = `${window.location.origin}/api/v1`;
+const baseURL = `https://blog-app-client-1whn.onrender.com/api/v1`;
 
 
 const axiosInstance = axios.create({
