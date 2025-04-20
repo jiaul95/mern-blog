@@ -61,11 +61,31 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+// const corsOptions = {
+//   origin: ['http://localhost:5173'], // add other origins as needed
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+//   credentials: true,
+// };
+
 const corsOptions = {
-  origin: ['https://blog-app-client-1whn.onrender.com'], // add other origins as needed
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'https://blog-app-client-1whn.onrender.com',
+      'https://your-another-frontend-url.com',
+    ];
+
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
+
 
 app.use(cors(corsOptions));
 app.use(morgan('dev'));
