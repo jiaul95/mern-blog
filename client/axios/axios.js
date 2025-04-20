@@ -2,8 +2,16 @@ import axios from "axios";
 import { store } from "../src/redux/store.js";
 import { signoutUserSuccess,signInFailure } from "../src/features/user/userSlice.js";
 
+// const axiosInstance = axios.create({
+//   baseURL: "http://localhost:8000/api/v1",
+//   withCredentials: true,
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+// });
+
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8000/api/v1",
+  baseURL: import.meta.env.VITE_API_URL, // Dynamic base URL
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
