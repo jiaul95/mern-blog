@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "build": "npm install --force && npm install --prefix client --force && npm run build --prefix client --force"
+    "build": "npm install --force && cd client && npm install --force && npm run build"
   },
   "keywords": [],
   "author": "",
