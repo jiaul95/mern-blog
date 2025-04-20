@@ -5,13 +5,27 @@ import bcrypt from "bcryptjs";
 import errorHandler from "../utils/customError.js";
 import jwt from "jsonwebtoken";
 import multer from "multer";
-import path from "path";
+
 import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 // Create uploads directory if not exists
-const uploadDir = "uploads/posts";
+// const uploadDir = "uploads/posts";
+// if (!fs.existsSync(uploadDir)) {
+//   fs.mkdirSync(uploadDir);
+// }
+
+
+// Fix for ES module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const uploadDir = path.join(__dirname, "uploads", "posts");
+
 if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
+  fs.mkdirSync(uploadDir, { recursive: true });
+  console.log("✅ Created upload directory:", uploadDir);
 }
 
 // Configure Multer Storage for Posts
