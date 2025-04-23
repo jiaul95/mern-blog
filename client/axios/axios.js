@@ -3,11 +3,8 @@ import { store } from "../src/redux/store.js";
 import { signoutUserSuccess,signInFailure } from "../src/features/user/userSlice.js";
 
 
-const baseURL = `https://blog-app-client-1whn.onrender.com/api/v1`;
-
-
 const axiosInstance = axios.create({
-  baseURL: `${baseURL}/api/v1`,
+  baseURL: "http://localhost:8000/api/v1",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
