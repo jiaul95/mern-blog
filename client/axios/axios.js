@@ -4,7 +4,7 @@ import { signoutUserSuccess,signInFailure } from "../src/features/user/userSlice
 
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8000/api/v1",
+  baseURL: "https://blog-app-client-1-r60g.onrender.com/api/v1",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
