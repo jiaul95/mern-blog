@@ -5,6 +5,7 @@ import { signoutUserSuccess,signInFailure } from "../src/features/user/userSlice
 
 const axiosInstance = axios.create({
   baseURL: "https://blog-app-client-1-nibj.onrender.com/api/v1",
+  // baseURL: "http://localhost:8000/api/v1",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -57,8 +58,8 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest); 
       } catch (refreshError) {
         store.dispatch(signoutUserSuccess());
-        // window.location.href = "/sign-in";
-        window.location.href = "https://mernblog.ennovatorz.com/sign-in";
+        window.location.href = "/sign-in";
+        // window.location.href = "https://mernblog.ennovatorz.com/sign-in";
         return Promise.reject(refreshError);
       }
     }
