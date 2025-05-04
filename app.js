@@ -63,7 +63,7 @@ const app = express();
 
 const corsOptions = {
   origin: ['https://mernblog.ennovatorz.com'], 
-  // origin: ['http://localhost:8000'],   
+  // origin: ['http://localhost:5173'],   
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 };
@@ -75,13 +75,8 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 
-// ✅ Sample base route
-// app.get("/", (req, res) => {
-//   res.send("==> Your service is live 🎉");
-// });
-
 // Serve uploads folder
-app.use("/uploads", express.static(path.join(__dirname, 'uploads')));
+app.use("/uploads", express.static(path.join(__dirname, 'controllers', 'uploads')));
 
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, 'client', 'dist')));

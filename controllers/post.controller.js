@@ -31,7 +31,7 @@ if (!fs.existsSync(uploadDir)) {
 // Configure Multer Storage for Posts
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/posts"); // Store images in `posts/uploads/`
+    cb(null, uploadDir); // Store images in `posts/uploads/`
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
