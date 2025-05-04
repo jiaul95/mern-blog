@@ -62,7 +62,8 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 const corsOptions = {
-  origin: ['https://mernblog.ennovatorz.com'], // add other origins as needed
+  // origin: ['https://mernblog.ennovatorz.com'], 
+  origin: ['http://localhost:8000'],   
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 };
@@ -75,9 +76,9 @@ app.use(express.urlencoded({ extended: true }));
 
 
 // ✅ Sample base route
-app.get("/", (req, res) => {
-  res.send("==> Your service is live 🎉");
-});
+// app.get("/", (req, res) => {
+//   res.send("==> Your service is live 🎉");
+// });
 
 // Serve uploads folder
 app.use("/uploads", express.static(path.join(__dirname, 'uploads')));
