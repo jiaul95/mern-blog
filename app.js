@@ -62,7 +62,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 const corsOptions = {
-  origin: ['http://localhost:5173'], // add other origins as needed
+  origin: ['https://mernblog.ennovatorz.com'], // add other origins as needed
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 };
