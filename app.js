@@ -73,6 +73,12 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
+
+// ✅ Sample base route
+app.get("/", (req, res) => {
+  res.send("==> Your service is live 🎉");
+});
+
 // Serve uploads folder
 app.use("/uploads", express.static(path.join(__dirname, 'uploads')));
 
