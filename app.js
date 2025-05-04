@@ -62,8 +62,8 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 const corsOptions = {
-  // origin: ['https://mernblog.ennovatorz.com'], 
-  origin: ['http://localhost:8000'],   
+  origin: ['https://mernblog.ennovatorz.com'], 
+  // origin: ['http://localhost:8000'],   
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 };
