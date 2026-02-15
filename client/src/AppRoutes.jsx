@@ -13,11 +13,18 @@ import { PostPage } from "./pages/PostPage.jsx";
 import { PrivateRoute } from "./components/PrivateRoute.jsx";
 import { OnlyAdminPrivateRoute } from "./components/OnlyAdminPrivateRoute.jsx";
 import { Search } from "./pages/Search.jsx";
-
+import {TestComponent} from "./components/TestComponent.jsx";
+import { TestForm } from "./components/TestForm.jsx";
+import { ContextAPIComponent } from "./components/ContextAPIComponent.jsx";
 const AppRoutes = () => {
 
   return (
     <Routes>
+
+      {/* <Route path="/test" element={<TestComponent />} /> */}
+      <Route path="/form" element={<TestForm />} />
+      <Route path="/context" element={<ContextAPIComponent />} />
+
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<About />} />
       <Route path="/sign-in" element={<SignIn />} />
@@ -36,7 +43,7 @@ const AppRoutes = () => {
             <Route path="/create-post" element={<CreatePost />} />
             <Route path="/update-post/:postId" element={<UpdatePost />} />
           </Route>
-        </>
+        </> 
       
     </Routes>
   );

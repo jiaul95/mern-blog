@@ -12,5 +12,9 @@ router.route("/getPosts").get(verifyToken, getPosts);
 router.route("/deletePost/:postId/:userId").delete(verifyToken, deletePost);
 router.route("/updatePost/:postId/:userId").put(verifyToken, updatePost);
 
+// public fetch post
+router.route("/getAllPosts").get(getPosts);
+
+
 
 export default router;

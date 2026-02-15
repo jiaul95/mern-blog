@@ -137,6 +137,7 @@ export const CreatePost = () => {
             <option value="reactjs">React.js</option>
             <option value="javascript">JavaScript</option>
             <option value="nextjs">Next.js</option>
+            <option value="ai">AI</option>
           </Select>
         </div>
 

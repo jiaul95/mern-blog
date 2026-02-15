@@ -9,9 +9,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <Header />
+      {/* <Header /> */}
       <AppRoutes />
-      <FooterComponent />
+      {/* <FooterComponent /> */}
     </BrowserRouter>
   );
 }
